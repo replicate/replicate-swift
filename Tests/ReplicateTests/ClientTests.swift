@@ -12,13 +12,14 @@ final class ClientTests: XCTestCase {
         let version: Model.Version.ID = "5c7d5dc6dd8bf75c1acaa8565735e7986bc5b66206b55cca93cb72c9bf15ccaa"
         let prediction = try await client.createPrediction(version, input: ["text": "Alice"])
         XCTAssertEqual(prediction.id, "ufawqhfynnddngldkgtslldrkq")
-        XCTAssertEqual(prediction.version, version)
+        XCTAssertEqual(prediction.versionID, version)
+        XCTAssertEqual(prediction.status, .starting)
     }
 
     func testGetPrediction() async throws {
         let prediction = try await client.getPrediction("ufawqhfynnddngldkgtslldrkq")
         XCTAssertEqual(prediction.id, "ufawqhfynnddngldkgtslldrkq")
-        XCTAssertEqual(prediction.version, "5c7d5dc6dd8bf75c1acaa8565735e7986bc5b66206b55cca93cb72c9bf15ccaa")
+        XCTAssertEqual(prediction.versionID, "5c7d5dc6dd8bf75c1acaa8565735e7986bc5b66206b55cca93cb72c9bf15ccaa")
         XCTAssertEqual(prediction.source, .web)
         XCTAssertEqual(prediction.status, .starting)
         XCTAssertEqual(prediction.createdAt.timeIntervalSinceReferenceDate, 672703986.224, accuracy: 1)

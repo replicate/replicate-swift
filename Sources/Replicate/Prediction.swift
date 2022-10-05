@@ -58,7 +58,7 @@ public struct Prediction: Hashable, Identifiable {
     public let id: ID
 
     /// The version of the model used to create the prediction.
-    public let version: Model.Version.ID
+    public let versionID: Model.Version.ID
 
     /// Where the prediction was made.
     public let source: Source?
@@ -102,7 +102,7 @@ public struct Prediction: Hashable, Identifiable {
 extension Prediction: Decodable {
     private enum CodingKeys: String, CodingKey {
         case id
-        case version
+        case versionID = "version"
         case source
         case input
         case output
