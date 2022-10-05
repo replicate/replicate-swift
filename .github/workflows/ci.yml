@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  macos:
+    runs-on: macos-latest
+
+    strategy:
+      matrix:
+        xcode:
+          - "14.0.1" # Swift 5.7
+
+    name: "macOS (Xcode ${{ matrix.xcode }})"
+
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_${{ matrix.xcode }}.app/Contents/Developer
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        with:
+          path: .build
+          key: ${{ runner.os }}-spm-xcode-${{ matrix.xcode }}-${{ hashFiles('**/Package.resolved') }}
+          restore-keys: |
+            ${{ runner.os }}-spm-xcode-${{ matrix.xcode }}-
+      - name: Build
+        run: swift build -v
+      - name: Run tests
+        run: swift test -v
+
+  linux:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        swift: ["5.7"]
+
+    name: "Linux (Swift ${{ matrix.swift }})"
+
+    container:
+      image: swift:${{ matrix.swift }}
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        with:
+          path: .build
+          key: ${{ runner.os }}-spm-xcode-${{ matrix.swift }}-${{ hashFiles('**/Package.resolved') }}
+          restore-keys: |
+            ${{ runner.os }}-spm-xcode-${{ matrix.swift }}-
+      - name: Build
+        run: swift build -v
+      - name: Run tests
+        run: swift test -v
