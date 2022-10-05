@@ -77,11 +77,12 @@ public class Client {
     ///         If there are network problems,
     ///         we will retry the webhook a few times,
     ///         so make sure it can be safely called more than once.
-    public func createPrediction(_ id: Model.Version.ID,
-                                 input: [String: AnyEncodable],
-                                 webhook: URL? = nil)
-        async throws -> Prediction
-    {
+    public func createPrediction<Input: Codable, Output: Codable>(
+        _ type: Prediction<Input, Output>.Type = AnyPrediction,
+        version id: Model.Version.ID,
+        input: Input,
+        webhook: URL? = nil
+    ) async throws -> Prediction<Input, Output> {
         var params: [String: AnyEncodable] = [
             "version": "\(id)",
             "input": AnyEncodable(input)
@@ -97,22 +98,30 @@ public class Client {
     /// Get a prediction
     ///
     /// - Parameter id: The ID of the prediction you want to fetch.
-    public func getPrediction(_ id: Prediction.ID) async throws -> Prediction {
+    public func getPrediction<Input: Codable, Output: Codable>(
+        _ type: Prediction<Input, Output>.Type = AnyPrediction,
+        id: Prediction.ID
+    ) async throws -> Prediction<Input, Output> {
         return try await fetch(.get, "predictions/\(id)")
     }
 
     /// Cancel a prediction
     ///
     /// - Parameter id: The ID of the prediction you want to fetch.
-    public func cancelPrediction(_ id: Prediction.ID) async throws -> Prediction {
+    public func cancelPrediction<Input: Codable, Output: Codable>(
+        _ type: Prediction<Input, Output>.Type = AnyPrediction,
+        id: Prediction.ID
+    ) async throws -> Prediction<Input, Output> {
         return try await fetch(.post, "predictions/\(id)/cancel")
     }
 
     /// Get a list of predictions
     ///
     /// - Parameter cursor: A pointer to a page of results to fetch.
-    public func getPredictions(cursor: Pagination.Cursor? = nil)
-        async throws -> Pagination.Page<Prediction>
+    public func getPredictions<Input: Codable, Output: Codable>(
+        _ type: Prediction<Input, Output>.Type = AnyPrediction,
+        cursor: Pagination.Cursor? = nil
+    ) async throws -> Pagination.Page<Prediction<Input, Output>>
     {
         return try await fetch(.get, "predictions", cursor: cursor)
     }
@@ -166,7 +175,7 @@ public class Client {
     ///    - slug:
     ///         The slug of the collection,
     ///         like super-resolution or image-restoration.
-    ///         
+    ///
     ///         See <https://replicate.com/collections>
     public func getModelCollection(_ slug: String)
         async throws -> Model.Collection
@@ -181,7 +190,10 @@ public class Client {
         case post = "POST"
     }
 
-    private func fetch<T: Decodable>(_ method: Method, _ path: String, cursor: Pagination.Cursor?) async throws -> Pagination.Page<T> {
+    private func fetch<T: Decodable>(_ method: Method,
+                                     _ path: String,
+                                     cursor: Pagination.Cursor?)
+    async throws -> Pagination.Page<T> {
         var params: [String: AnyEncodable]? = nil
         if let cursor {
             params = ["cursor": "\(cursor)"]
@@ -190,7 +202,10 @@ public class Client {
         return try await fetch(method, path, params: params)
     }
 
-    private func fetch<T: Decodable>(_ method: Method, _ path: String, params: [String: AnyEncodable]? = nil) async throws -> T {
+    private func fetch<T: Decodable>(_ method: Method,
+                                     _ path: String,
+                                     params: [String: AnyEncodable]? = nil)
+    async throws -> T {
         var urlComponents = URLComponents(string: "https://api.replicate.com/v1/" + path)
         var httpBody: Data? = nil
 

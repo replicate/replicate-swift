@@ -3,12 +3,14 @@ import struct Foundation.TimeInterval
 
 import AnyCodable
 
+public typealias AnyPrediction = Prediction<AnyCodable, AnyCodable>
+
 /// A prediction made by a model hosted on Replicate.
-public struct Prediction: Hashable, Identifiable {
+public struct Prediction<Input, Output>: Identifiable where Input: Codable, Output: Codable {
     public typealias ID = String
 
     /// Source for creating a prediction.
-    public enum Source: String, Decodable {
+    public enum Source: String, Codable {
         /// The prediction was made on the web.
         case web
 
@@ -23,7 +25,7 @@ public struct Prediction: Hashable, Identifiable {
     }
 
     /// The status of the prediction.
-    public enum Status: String, Hashable, Decodable {
+    public enum Status: String, Hashable, Codable {
         /// The prediction is starting up.
         /// If this status lasts longer than a few seconds,
         /// then it's typically because a new worker is being started to run the prediction.
@@ -73,10 +75,10 @@ public struct Prediction: Hashable, Identifiable {
     /// takes `prompt` as an input.
     ///
     /// Files should be passed as data URLs or HTTP URLs.
-    public let input: AnyDecodable
+    public let input: Input
 
     /// The output of the model for the prediction, if completed successfully.
-    public let output: AnyDecodable?
+    public let output: Output?
 
     /// The status of the prediction.
     public let status: Status
@@ -99,7 +101,7 @@ public struct Prediction: Hashable, Identifiable {
 
 // MARK: - Decodable
 
-extension Prediction: Decodable {
+extension Prediction: Codable {
     private enum CodingKeys: String, CodingKey {
         case id
         case versionID = "version"
@@ -115,7 +117,7 @@ extension Prediction: Decodable {
     }
 }
 
-extension Prediction.Metrics: Decodable {
+extension Prediction.Metrics: Codable {
     private enum CodingKeys: String, CodingKey {
         case predictTime = "predict_time"
     }
@@ -125,3 +127,8 @@ extension Prediction.Metrics: Decodable {
         self.predictTime = try container.decodeIfPresent(TimeInterval.self, forKey: .predictTime)
     }
 }
+
+// MARK: - Hashable
+
+extension Prediction: Equatable where Input: Equatable, Output: Equatable {}
+extension Prediction: Hashable where Input: Hashable, Output: Hashable {}
