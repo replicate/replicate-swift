@@ -10,8 +10,20 @@ import AnyCodable
 ///
 /// See https://replicate.com/docs/reference/http
 public class Client {
-    /// A paginated collection of results.
-    public struct Pagination<Result> {
+    /// A namespace for pagination cursor and page types.
+    public enum Pagination {
+        /// A paginated collection of results.
+        public struct Page <Result> {
+            /// A pointer to the previous page of results
+            public let previous: Cursor?
+
+            /// A pointer to the next page of results.
+            public let next: Cursor?
+
+            /// The results for this page.
+            public let results: [Result]
+        }
+
         /// A pointer to a page of results.
         public struct Cursor: RawRepresentable, Hashable {
             public var rawValue: String
@@ -20,15 +32,6 @@ public class Client {
                 self.rawValue = rawValue
             }
         }
-
-        /// A pointer to the previous page of results
-        public let previous: Cursor?
-
-        /// A pointer to the next page of results.
-        public let next: Cursor?
-
-        /// The results for this page.
-        public let results: [Result]
     }
 
     private let token: String
@@ -108,8 +111,8 @@ public class Client {
     /// Get a list of predictions
     ///
     /// - Parameter cursor: A pointer to a page of results to fetch.
-    public func getPredictions(cursor: Pagination<Prediction>.Cursor? = nil)
-        async throws -> Pagination<Prediction>
+    public func getPredictions(cursor: Pagination.Cursor? = nil)
+        async throws -> Pagination.Page<Prediction>
     {
         return try await fetch(.get, "predictions", cursor: cursor)
     }
@@ -136,8 +139,8 @@ public class Client {
     ///          For example, "stability-ai/stable-diffusion".
     ///    - cursor: A pointer to a page of results to fetch.
     public func getModelVersions(_ id: Model.ID,
-                                 cursor: Pagination<Model.Version>.Cursor? = nil)
-        async throws -> Pagination<Model.Version>
+                                 cursor: Pagination.Cursor? = nil)
+        async throws -> Pagination.Page<Model.Version>
     {
         return try await fetch(.get, "models/\(id)/versions", cursor: cursor)
     }
@@ -178,7 +181,7 @@ public class Client {
         case post = "POST"
     }
 
-    private func fetch<T: Decodable>(_ method: Method, _ path: String, cursor: Pagination<T>.Cursor?) async throws -> Pagination<T> {
+    private func fetch<T: Decodable>(_ method: Method, _ path: String, cursor: Pagination.Cursor?) async throws -> Pagination.Page<T> {
         var params: [String: AnyEncodable]? = nil
         if let cursor {
             params = ["cursor": "\(cursor)"]
@@ -241,7 +244,7 @@ public class Client {
 
 // MARK: - Decodable
 
-extension Client.Pagination: Decodable where Result: Decodable {
+extension Client.Pagination.Page: Decodable where Result: Decodable {
     private enum CodingKeys: String, CodingKey {
         case results
         case previous
@@ -250,8 +253,8 @@ extension Client.Pagination: Decodable where Result: Decodable {
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.previous = try? container.decode(Cursor.self, forKey: .previous)
-        self.next = try? container.decode(Cursor.self, forKey: .next)
+        self.previous = try? container.decode(Client.Pagination.Cursor.self, forKey: .previous)
+        self.next = try? container.decode(Client.Pagination.Cursor.self, forKey: .next)
         self.results = try container.decode([Result].self, forKey: .results)
     }
 }
