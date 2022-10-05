@@ -19,7 +19,7 @@ public struct Prediction: Hashable, Identifiable {
     /// Metrics for the prediction.
     public struct Metrics: Hashable {
         /// How long it took to create the prediction, in seconds.
-        public let predictTime: TimeInterval
+        public let predictTime: TimeInterval?
     }
 
     /// The status of the prediction.
@@ -118,5 +118,10 @@ extension Prediction: Decodable {
 extension Prediction.Metrics: Decodable {
     private enum CodingKeys: String, CodingKey {
         case predictTime = "predict_time"
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.predictTime = try container.decodeIfPresent(TimeInterval.self, forKey: .predictTime)
     }
 }
