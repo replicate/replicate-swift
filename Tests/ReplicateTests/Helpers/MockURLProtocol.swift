@@ -5,6 +5,7 @@ import FoundationNetworking
 #endif
 
 import AnyCodable
+@testable import Replicate
 
 class MockURLProtocol: URLProtocol {
     static let validToken = "<valid>"
@@ -52,17 +53,14 @@ class MockURLProtocol: URLProtocol {
                           "output": null,
                           "error": null,
                           "logs": null,
-                          "metrics": {
-                            "predict_time": 10.0
-                          }
+                          "metrics": {}
                         }
                       ]
                     }
                 """#
-            case ("POST", "https://api.replicate.com/v1/predictions"?),
-                 ("GET", "https://api.replicate.com/v1/predictions/ufawqhfynnddngldkgtslldrkq"?),
-                 ("POST", "https://api.replicate.com/v1/predictions/ufawqhfynnddngldkgtslldrkq/cancel"?):
-                statusCode = request.httpMethod == "GET" ? 200 : 201
+            case ("POST", "https://api.replicate.com/v1/predictions"?):
+                statusCode = 201
+
                 json = #"""
                     {
                       "id": "ufawqhfynnddngldkgtslldrkq",
@@ -72,7 +70,7 @@ class MockURLProtocol: URLProtocol {
                         "cancel": "https://api.replicate.com/v1/predictions/ufawqhfynnddngldkgtslldrkq/cancel"
                       },
                       "created_at": "2022-04-26T22:13:06.224088Z",
-                      "completed_at": null,
+                      "completed_at": "2022-04-26T22:13:06.580379Z",
                       "source": "web",
                       "status": "starting",
                       "input": {
@@ -81,9 +79,55 @@ class MockURLProtocol: URLProtocol {
                       "output": null,
                       "error": null,
                       "logs": null,
+                      "metrics": {}
+                    }
+                """#
+            case ("GET", "https://api.replicate.com/v1/predictions/ufawqhfynnddngldkgtslldrkq"?):
+                statusCode = 200
+                json = #"""
+                    {
+                      "id": "ufawqhfynnddngldkgtslldrkq",
+                      "version": "5c7d5dc6dd8bf75c1acaa8565735e7986bc5b66206b55cca93cb72c9bf15ccaa",
+                      "urls": {
+                        "get": "https://api.replicate.com/v1/predictions/ufawqhfynnddngldkgtslldrkq",
+                        "cancel": "https://api.replicate.com/v1/predictions/ufawqhfynnddngldkgtslldrkq/cancel"
+                      },
+                      "created_at": "2022-04-26T22:13:06.224088Z",
+                      "completed_at": "2022-04-26T22:15:06.224088Z",
+                      "source": "web",
+                      "status": "succeeded",
+                      "input": {
+                        "text": "Alice"
+                      },
+                      "output": ["Hello, Alice!"],
+                      "error": null,
+                      "logs": "",
                       "metrics": {
                         "predict_time": 10.0
                       }
+                    }
+                """#
+            case ("POST", "https://api.replicate.com/v1/predictions/ufawqhfynnddngldkgtslldrkq/cancel"?):
+                statusCode = 200
+                json = #"""
+                    {
+                      "id": "ufawqhfynnddngldkgtslldrkq",
+                      "version": "5c7d5dc6dd8bf75c1acaa8565735e7986bc5b66206b55cca93cb72c9bf15ccaa",
+                      "urls": {
+                        "get": "https://api.replicate.com/v1/predictions/ufawqhfynnddngldkgtslldrkq",
+                        "cancel": "https://api.replicate.com/v1/predictions/ufawqhfynnddngldkgtslldrkq/cancel"
+                      },
+                      "created_at": "2022-04-26T22:13:06.224088Z",
+                      "completed_at": "2022-04-26T22:15:06.224088Z",
+                      "source": "web",
+                      "status": "canceled",
+                      "input": {
+                        "text": "Alice"
+                      },
+                      "output": null,
+                      "error": null,
+                      "logs": "",
+                      "metrics": {}
                     }
                 """#
             case ("GET", "https://api.replicate.com/v1/models/replicate/hello-world"?):
@@ -178,3 +222,23 @@ class MockURLProtocol: URLProtocol {
 
     override func stopLoading() {}
 }
+
+// MARK: -
+
+extension Client {
+    static var valid: Client {
+        return Client(token: MockURLProtocol.validToken).mocked
+    }
+
+    static var unauthenticated: Client {
+        return Client(token: "").mocked
+    }
+
+    private var mocked: Self {
+        let configuration = session.configuration
+        configuration.protocolClasses = [MockURLProtocol.self]
+        session = URLSession(configuration: configuration)
+        return self
+    }
+}
+
