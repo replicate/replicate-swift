@@ -3,6 +3,7 @@ import struct Foundation.TimeInterval
 
 import AnyCodable
 
+/// A prediction with unspecified inputs and outputs.
 public typealias AnyPrediction = Prediction<AnyCodable, AnyCodable>
 
 /// A prediction made by a model hosted on Replicate.
