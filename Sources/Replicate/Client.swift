@@ -77,6 +77,14 @@ public class Client {
     ///         If there are network problems,
     ///         we will retry the webhook a few times,
     ///         so make sure it can be safely called more than once.
+    ///    - wait:
+    ///         If set to `true`,
+    ///         this method refreshes the prediction until it completes
+    ///         (``Prediction/status`` is `.succeeded` or `.failed`).
+    ///         By default, this is `false`,
+    ///         and this method returns the prediction object encoded
+    ///         in the original creation response
+    ///         (``Prediction/status`` is `.starting`).
     public func createPrediction<Input: Codable, Output: Codable>(
         _ type: Prediction<Input, Output>.Type = AnyPrediction,
         version id: Model.Version.ID,
