@@ -81,7 +81,8 @@ public class Client {
         _ type: Prediction<Input, Output>.Type = AnyPrediction,
         version id: Model.Version.ID,
         input: Input,
-        webhook: URL? = nil
+        webhook: URL? = nil,
+        wait: Bool = false
     ) async throws -> Prediction<Input, Output> {
         var params: [String: AnyEncodable] = [
             "version": "\(id)",
@@ -92,7 +93,13 @@ public class Client {
             params["webhook"] = "\(webhook.absoluteString)"
         }
 
-        return try await fetch(.post, "predictions", params: params)
+        var prediction: Prediction<Input, Output> = try await fetch(.post, "predictions", params: params)
+        if wait {
+            try await prediction.wait(with: self)
+            return prediction
+        } else {
+            return prediction
+        }
     }
 
     /// Get a prediction
