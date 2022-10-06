@@ -237,6 +237,10 @@ public class Client {
                 throw error
             }
 
+            if let string = String(data: data, encoding: .utf8) {
+                throw Error(detail: "invalid response: \(response) \n \(string)")
+            }
+
             throw Error(detail: "invalid response: \(response)")
         }
     }
