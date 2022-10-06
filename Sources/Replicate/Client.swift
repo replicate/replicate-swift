@@ -34,8 +34,78 @@ public class Client {
         }
     }
 
+    public struct RetryPolicy: Equatable, Sequence {
+        public enum Strategy: Hashable {
+            case constant(base: TimeInterval = 2.0,
+                          jitter: Double = 0.0)
+
+            case exponential(base: TimeInterval = 2.0,
+                             multiplier: Double = 2.0,
+                             jitter: Double = 0.5)
+        }
+
+        public let strategy: Strategy
+        public let timeout: TimeInterval?
+        public let maximumInterval: TimeInterval?
+        public let maximumRetries: Int?
+
+        static let `default` = RetryPolicy(strategy: .exponential(),
+                                           timeout: 300.0,
+                                           maximumInterval: 30.0,
+                                           maximumRetries: 10)
+
+        public init(strategy: Strategy,
+                    timeout: TimeInterval? = 300.0,
+                    maximumInterval: TimeInterval?,
+                    maximumRetries: Int)
+        {
+            self.strategy = strategy
+            self.timeout = timeout
+            self.maximumInterval = maximumInterval
+            self.maximumRetries = maximumRetries
+        }
+
+        public struct Retrier: IteratorProtocol {
+            public private(set) var retries: Int = 1
+            public let policy: RetryPolicy
+            public let deadline: DispatchTime?
+
+            init(policy: RetryPolicy,
+                 deadline: DispatchTime?)
+            {
+                self.policy = policy
+                self.deadline = deadline
+            }
+
+            public mutating func next() -> TimeInterval? {
+                guard policy.maximumRetries.flatMap({ $0 > retries }) ?? true else { return nil }
+                guard deadline.flatMap({ $0 > .now() }) ?? true else { return nil }
+
+                defer { retries += 1 }
+
+                let delay: TimeInterval
+                switch policy.strategy {
+                case .constant(let base, let jitter):
+                    delay = base * Double(retries) + Double.random(jitter: jitter)
+                case .exponential(let base, let multiplier, let jitter):
+                    delay = base * (pow(multiplier, Double(retries))) + Double.random(jitter: jitter)
+                }
+
+                return Swift.min(policy.maximumInterval ?? TimeInterval.greatestFiniteMagnitude, delay)
+            }
+        }
+
+        public func makeIterator() -> Retrier {
+            return Retrier(policy: self, deadline: timeout.flatMap {
+                .now().advanced(by: .nanoseconds(Int($0 * 1e+9)))
+            })
+        }
+    }
+
     private let token: String
     internal var session = URLSession(configuration: .default)
+
+    public var retryPolicy: RetryPolicy = .default
 
     /// Creates a client with the specified API token.
     ///
@@ -340,5 +410,11 @@ private extension JSONDecoder.DateDecodingStrategy {
         }
 
         return date
+    }
+}
+
+private extension Double {
+    static func random(jitter amount: Double) -> Double {
+        return Double.random(in: (-amount / 2)...(amount / 2))
     }
 }
