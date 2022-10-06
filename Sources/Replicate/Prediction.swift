@@ -102,6 +102,18 @@ public struct Prediction<Input, Output>: Identifiable where Input: Codable, Outp
 
     // MARK: -
 
+    /// Wait for the prediction to complete.
+    ///
+    /// - Parameters:
+    ///     - client: The client used to make API requests.
+    ///     - delay: The delay between requests.
+    ///     - priority: The task priority.
+    ///     - timeout: If specified,
+    ///                the total amount of time to wait
+    ///                before throwing ``CancellationError``.
+    ///     - maximumRetries: If specified,
+    ///                       the maximum number of requests to make to the API
+    ///                       before throwing ``CancellationError``.
     public mutating func wait(
         with client: Client,
         delay: TimeInterval = 1.0,
@@ -161,6 +173,10 @@ public struct Prediction<Input, Output>: Identifiable where Input: Codable, Outp
         }
     }
 
+    /// Cancel the prediction.
+    ///
+    /// - Parameters:
+    ///     - client: The client used to make API requests.
     public mutating func cancel(with client: Client) async throws {
         self = try await client.cancelPrediction(Self.self, id: id)
     }
