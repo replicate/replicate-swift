@@ -11,6 +11,9 @@ let package = Package(
         .library(
             name: "Replicate",
             targets: ["Replicate"]),
+        .executable(
+            name: "generate-replicate-model",
+            targets: ["generate-replicate-model"]),
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
