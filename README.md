@@ -1,10 +1,10 @@
 # Replicate Swift client
 
-This is a Swift client for [Replicate]. 
-It lets you run models from your Swift code, 
+This is a Swift client for [Replicate].
+It lets you run models from your Swift code,
 and do various other things on Replicate.
 
-Grab your token from [replicate.com/account](https://replicate.com/account) 
+Grab your token from [replicate.com/account](https://replicate.com/account)
 and passing it to `Client(token:)`:
 
 ```swift
@@ -23,15 +23,16 @@ if let latestVersion = model.latestVersion {
         a 19th century portrait of a wombat gentleman
     """
     let prediction = try await client.createPrediction(latestVersion,
-                                                       input: ["prompt": "\(prompt)"])
+                                                       input: ["prompt": "\(prompt)"],
+                                                       wait: true)
     print(prediction.output)
     // https://replicate.com/api/models/stability-ai/stable-diffusion/files/50fcac81-865d-499e-81ac-49de0cb79264/out-0.png
 }
 ```
 
-Some models, 
-like [tencentarc/gfpgan](https://replicate.com/tencentarc/gfpgan), 
-receive images as inputs. 
+Some models,
+like [tencentarc/gfpgan](https://replicate.com/tencentarc/gfpgan),
+receive images as inputs.
 To pass a file as an input,
 read the contents of the file into a `Data` object,
 and use the `uriEncoded(mimeType:) helper method to create a URI-encoded string.
@@ -61,9 +62,7 @@ var prediction = client.createPrediction(model.latestVersion!,
 print(prediction.status)
 // "starting"
 
-sleep(10)
-
-prediction = try await client.getPrediction(prediction.id)
+try await prediction.wait(with: client)
 print(prediction.status)
 // "succeeded"
 ```
@@ -81,7 +80,7 @@ var prediction = client.createPrediction(model.latestVersion!,
 print(prediction.status)
 // "starting"
 
-prediction = try await client.cancelPrediction(prediction.id)
+try await prediction.cancel(with: client)
 print(prediction.status)
 // "canceled"
 ```
@@ -102,7 +101,7 @@ repeat {
 
 ## Adding `Replicate` as a Dependency
 
-To use the `Replicate` library in a Swift project, 
+To use the `Replicate` library in a Swift project,
 add it to the dependencies for your package and your target:
 
 ```swift
@@ -110,7 +109,7 @@ let package = Package(
     // name, platforms, products, etc.
     dependencies: [
         // other dependencies
-        .package(url: "https://github.com/mattt/replicate-swift", from: "0.1.0"),
+        .package(url: "https://github.com/mattt/replicate-swift", from: "0.3.0"),
     ],
     targets: [
         .target(name: "<target>", dependencies: [

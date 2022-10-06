@@ -1,5 +1,6 @@
 import struct Foundation.Date
 import struct Foundation.TimeInterval
+import struct Dispatch.DispatchTime
 
 import AnyCodable
 
@@ -98,6 +99,87 @@ public struct Prediction<Input, Output>: Identifiable where Input: Codable, Outp
 
     /// When the prediction was completed.
     public let completedAt: Date?
+
+    // MARK: -
+
+    /// Wait for the prediction to complete.
+    ///
+    /// - Parameters:
+    ///     - client: The client used to make API requests.
+    ///     - delay: The delay between requests.
+    ///     - priority: The task priority.
+    ///     - timeout: If specified,
+    ///                the total amount of time to wait
+    ///                before throwing ``CancellationError``.
+    ///     - maximumRetries: If specified,
+    ///                       the maximum number of requests to make to the API
+    ///                       before throwing ``CancellationError``.
+    public mutating func wait(
+        with client: Client,
+        delay: TimeInterval = 1.0,
+        priority: TaskPriority? = nil,
+        timeout: TimeInterval? = nil,
+        maximumRetries: Int? = nil
+    ) async throws {
+        self = try await Self.wait(for: self,
+                                   with: client,
+                                   priority: priority,
+                                   deadline: timeout.flatMap {
+                                    DispatchTime.now().advanced(by: .nanoseconds(Int($0 * 1e+9)))
+                                   },
+                                   maximumRetries: maximumRetries)
+    }
+
+    private static func wait(
+        for current: Self,
+        with client: Client,
+        delay: TimeInterval = 1.0,
+        priority: TaskPriority?,
+        deadline: DispatchTime?,
+        maximumRetries: Int?
+    ) async throws -> Self {
+        guard !current.status.terminated else { return current }
+        guard maximumRetries.flatMap({ $0 > 0 }) ?? true else { throw CancellationError() }
+        guard deadline.flatMap({ $0 > .now() }) ?? true else { throw CancellationError() }
+
+        let id = current.id
+        let updated = try await withThrowingTaskGroup(of: Self.self) { group in
+            group.addTask {
+                try await Task.sleep(nanoseconds: UInt64(delay * 1e+9))
+                return try await client.getPrediction(Self.self, id: id)
+            }
+
+            if let deadline {
+                group.addTask {
+                    try await Task.sleep(nanoseconds: deadline.uptimeNanoseconds - DispatchTime.now().uptimeNanoseconds)
+                    throw CancellationError()
+                }
+            }
+
+            let value = try await group.next()
+            group.cancelAll()
+
+            return value ?? current
+        }
+
+        if updated.status.terminated {
+            return updated
+        } else {
+            return try await wait(for: updated,
+                                  with: client,
+                                  priority: priority,
+                                  deadline: deadline,
+                                  maximumRetries: maximumRetries.flatMap({ $0 - 1 }))
+        }
+    }
+
+    /// Cancel the prediction.
+    ///
+    /// - Parameters:
+    ///     - client: The client used to make API requests.
+    public mutating func cancel(with client: Client) async throws {
+        self = try await client.cancelPrediction(Self.self, id: id)
+    }
 }
 
 // MARK: - Decodable
