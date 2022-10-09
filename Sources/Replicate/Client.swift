@@ -387,7 +387,7 @@ extension Client {
                     delay = base * (pow(multiplier, Double(retries))) + Double.random(jitter: jitter)
                 }
 
-                return Swift.min(policy.maximumInterval ?? TimeInterval.greatestFiniteMagnitude, delay)
+                return delay.clamped(to: 0...(policy.maximumInterval ?? .greatestFiniteMagnitude))
             }
         }
 
@@ -423,5 +423,11 @@ private extension Double {
     static func random(jitter amount: Double) -> Double {
         guard !amount.isZero else { return 0.0 }
         return Double.random(in: (-amount / 2)...(amount / 2))
+    }
+}
+
+private extension Comparable {
+    func clamped(to range: ClosedRange<Self>) -> Self {
+        return min(max(self, range.lowerBound), range.upperBound)
     }
 }
