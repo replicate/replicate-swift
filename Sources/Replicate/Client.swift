@@ -421,6 +421,7 @@ private extension JSONDecoder.DateDecodingStrategy {
 
 private extension Double {
     static func random(jitter amount: Double) -> Double {
+        guard !amount.isZero else { return 0.0 }
         return Double.random(in: (-amount / 2)...(amount / 2))
     }
 }
