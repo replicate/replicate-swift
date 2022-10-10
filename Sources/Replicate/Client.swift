@@ -330,28 +330,70 @@ extension Client.Pagination.Cursor: ExpressibleByStringLiteral {
 // MARK: -
 
 extension Client {
+    /// A policy for how often a client should retry a request.
     public struct RetryPolicy: Equatable, Sequence {
+        /// A strategy used to determine how long to wait between retries.
         public enum Strategy: Hashable {
-            case constant(base: TimeInterval = 2.0,
+            /// Wait for a constant interval.
+            ///
+            /// This strategy implements constant backoff with jitter
+            /// as described by the equation:
+            ///
+            /// $$
+            /// t = d + R([-j/2, j/2])
+            /// $$
+            ///
+            /// - Parameters:
+            ///   - duration: The constant interval ($d$).
+            ///   - jitter: The amount of random jitter ($j$).
+            case constant(duration: TimeInterval = 2.0,
                           jitter: Double = 0.0)
 
+            /// Wait for an exponentially increasing interval.
+            ///
+            /// This strategy implements exponential backoff with jitter
+            /// as described by the equation:
+            ///
+            /// $$
+            /// t = b^c + R([-j/2, j/2])
+            /// $$
+            ///
+            /// - Parameters:
+            ///   - base: The power base ($b$).
+            ///   - multiplier: The power exponent ($c$).
+            ///   - jitter: The amount of random jitter ($j$).
             case exponential(base: TimeInterval = 2.0,
                              multiplier: Double = 2.0,
                              jitter: Double = 0.5)
         }
 
+        /// The strategy used to determine how long to wait between retries.
         public let strategy: Strategy
+
+        /// The total maximum amount of time to retry requests.
         public let timeout: TimeInterval?
+
+        /// The maximum amount of time between requests.
         public let maximumInterval: TimeInterval?
+
+        /// The maximum number of requests to make.
         public let maximumRetries: Int?
 
+        /// The default retry policy.
         static let `default` = RetryPolicy(strategy: .exponential(),
                                            timeout: 300.0,
                                            maximumInterval: 30.0,
                                            maximumRetries: 10)
 
+        /// Creates a new retry policy.
+        ///
+        /// - Parameters:
+        ///   - strategy: The strategy used to determine how long to wait between retries.
+        ///   - timeout: The total maximum amount of time to retry requests.
+        ///   - maximumInterval: The maximum amount of time between requests.
+        ///   - maximumRetries: The maximum number of requests to make.
         public init(strategy: Strategy,
-                    timeout: TimeInterval? = 300.0,
+                    timeout: TimeInterval?,
                     maximumInterval: TimeInterval?,
                     maximumRetries: Int)
         {
@@ -361,11 +403,25 @@ extension Client {
             self.maximumRetries = maximumRetries
         }
 
+        /// An instantiation of a retry policy.
+        ///
+        /// This type satisfies a requirement for `RetryPolicy`
+        /// to conform to the `Sequence` protocol.
         public struct Retrier: IteratorProtocol {
+            /// The number of retry attempts made.
             public private(set) var retries: Int = 1
+
+            /// The retry policy.
             public let policy: RetryPolicy
+
+            /// A time after which no delay values are produced, if any.
             public let deadline: DispatchTime?
 
+            /// Creates a new instantiation of a retry policy.
+            ///
+            /// - Parameters:
+            ///   - policy: The retry policy.
+            ///   - deadline: A time after which no delay values are produced, if any.
             init(policy: RetryPolicy,
                  deadline: DispatchTime?)
             {
@@ -373,6 +429,7 @@ extension Client {
                 self.deadline = deadline
             }
 
+            /// Returns the next delay amount, or `nil`.
             public mutating func next() -> TimeInterval? {
                 guard policy.maximumRetries.flatMap({ $0 > retries }) ?? true else { return nil }
                 guard deadline.flatMap({ $0 > .now() }) ?? true else { return nil }
@@ -391,6 +448,7 @@ extension Client {
             }
         }
 
+        // Returns a new instantiation of the retry policy.
         public func makeIterator() -> Retrier {
             return Retrier(policy: self, deadline: timeout.flatMap {
                 .now().advanced(by: .nanoseconds(Int($0 * 1e+9)))
