@@ -414,6 +414,9 @@ extension Client {
             /// The retry policy.
             public let policy: RetryPolicy
 
+            /// The random number generator used to create random values.
+            private var randomNumberGenerator: any RandomNumberGenerator
+
             /// A time after which no delay values are produced, if any.
             public let deadline: DispatchTime?
 
@@ -421,11 +424,14 @@ extension Client {
             ///
             /// - Parameters:
             ///   - policy: The retry policy.
+            ///   - randomNumberGenerator: The random number generator used to create random values.
             ///   - deadline: A time after which no delay values are produced, if any.
             init(policy: RetryPolicy,
+                 randomNumberGenerator: any RandomNumberGenerator = SystemRandomNumberGenerator(),
                  deadline: DispatchTime?)
             {
                 self.policy = policy
+                self.randomNumberGenerator = randomNumberGenerator
                 self.deadline = deadline
             }
 
@@ -439,9 +445,9 @@ extension Client {
                 let delay: TimeInterval
                 switch policy.strategy {
                 case .constant(let base, let jitter):
-                    delay = base * Double(retries) + Double.random(jitter: jitter)
+                    delay = base * Double(retries) + Double.random(jitter: jitter, using: &randomNumberGenerator)
                 case .exponential(let base, let multiplier, let jitter):
-                    delay = base * (pow(multiplier, Double(retries))) + Double.random(jitter: jitter)
+                    delay = base * (pow(multiplier, Double(retries))) + Double.random(jitter: jitter, using: &randomNumberGenerator)
                 }
 
                 return delay.clamped(to: 0...(policy.maximumInterval ?? .greatestFiniteMagnitude))
@@ -478,7 +484,10 @@ private extension JSONDecoder.DateDecodingStrategy {
 }
 
 private extension Double {
-    static func random(jitter amount: Double) -> Double {
+    static func random<T>(jitter amount: Double,
+                          using generator: inout T) -> Double
+        where T : RandomNumberGenerator
+    {
         guard !amount.isZero else { return 0.0 }
         return Double.random(in: (-amount / 2)...(amount / 2))
     }
