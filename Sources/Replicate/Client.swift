@@ -395,7 +395,7 @@ extension Client {
         public init(strategy: Strategy,
                     timeout: TimeInterval?,
                     maximumInterval: TimeInterval?,
-                    maximumRetries: Int)
+                    maximumRetries: Int?)
         {
             self.strategy = strategy
             self.timeout = timeout
