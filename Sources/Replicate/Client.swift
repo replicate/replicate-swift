@@ -390,13 +390,20 @@ extension Client {
         /// - Parameters:
         ///   - strategy: The strategy used to determine how long to wait between retries.
         ///   - timeout: The total maximum amount of time to retry requests.
+        ///              Must be greater than zero, if specified.
         ///   - maximumInterval: The maximum amount of time between requests.
+        ///                      Must be greater than zero, if specified.
         ///   - maximumRetries: The maximum number of requests to make.
+        ///                     Must be greater than zero, if specified.
         public init(strategy: Strategy,
                     timeout: TimeInterval?,
                     maximumInterval: TimeInterval?,
                     maximumRetries: Int?)
         {
+            precondition(timeout ?? .greatestFiniteMagnitude > 0)
+            precondition(maximumInterval ?? .greatestFiniteMagnitude > 0)
+            precondition(maximumRetries ?? .max > 0)
+
             self.strategy = strategy
             self.timeout = timeout
             self.maximumInterval = maximumInterval
@@ -456,9 +463,10 @@ extension Client {
 
         // Returns a new instantiation of the retry policy.
         public func makeIterator() -> Retrier {
-            return Retrier(policy: self, deadline: timeout.flatMap {
-                .now().advanced(by: .nanoseconds(Int($0 * 1e+9)))
-            })
+            return Retrier(policy: self,
+                           deadline: timeout.flatMap {
+                            .now().advanced(by: .nanoseconds(Int($0 * 1e+9)))
+                           })
         }
     }
 }
