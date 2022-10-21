@@ -409,7 +409,7 @@ extension Client {
         /// to conform to the `Sequence` protocol.
         public struct Retrier: IteratorProtocol {
             /// The number of retry attempts made.
-            public private(set) var retries: Int = 1
+            public private(set) var retries: Int = 0
 
             /// The retry policy.
             public let policy: RetryPolicy
@@ -445,7 +445,7 @@ extension Client {
                 let delay: TimeInterval
                 switch policy.strategy {
                 case .constant(let base, let jitter):
-                    delay = base * Double(retries) + Double.random(jitter: jitter, using: &randomNumberGenerator)
+                    delay = base + Double.random(jitter: jitter, using: &randomNumberGenerator)
                 case .exponential(let base, let multiplier, let jitter):
                     delay = base * (pow(multiplier, Double(retries))) + Double.random(jitter: jitter, using: &randomNumberGenerator)
                 }
