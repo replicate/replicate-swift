@@ -116,31 +116,23 @@ public struct Prediction<Input, Output>: Identifiable where Input: Codable, Outp
     ///                       before throwing ``CancellationError``.
     public mutating func wait(
         with client: Client,
-        delay: TimeInterval = 1.0,
-        priority: TaskPriority? = nil,
-        timeout: TimeInterval? = nil,
-        maximumRetries: Int? = nil
+        priority: TaskPriority? = nil
     ) async throws {
+        var retrier = client.retryPolicy.makeIterator()
         self = try await Self.wait(for: self,
                                    with: client,
                                    priority: priority,
-                                   deadline: timeout.flatMap {
-                                    DispatchTime.now().advanced(by: .nanoseconds(Int($0 * 1e+9)))
-                                   },
-                                   maximumRetries: maximumRetries)
+                                   retrier: &retrier)
     }
 
     private static func wait(
         for current: Self,
         with client: Client,
-        delay: TimeInterval = 1.0,
         priority: TaskPriority?,
-        deadline: DispatchTime?,
-        maximumRetries: Int?
+        retrier: inout Client.RetryPolicy.Iterator
     ) async throws -> Self {
         guard !current.status.terminated else { return current }
-        guard maximumRetries.flatMap({ $0 > 0 }) ?? true else { throw CancellationError() }
-        guard deadline.flatMap({ $0 > .now() }) ?? true else { throw CancellationError() }
+        guard let delay = retrier.next() else { throw CancellationError() }
 
         let id = current.id
         let updated = try await withThrowingTaskGroup(of: Self.self) { group in
@@ -149,7 +141,7 @@ public struct Prediction<Input, Output>: Identifiable where Input: Codable, Outp
                 return try await client.getPrediction(Self.self, id: id)
             }
 
-            if let deadline {
+            if let deadline = retrier.deadline {
                 group.addTask {
                     try await Task.sleep(nanoseconds: deadline.uptimeNanoseconds - DispatchTime.now().uptimeNanoseconds)
                     throw CancellationError()
@@ -168,8 +160,7 @@ public struct Prediction<Input, Output>: Identifiable where Input: Codable, Outp
             return try await wait(for: updated,
                                   with: client,
                                   priority: priority,
-                                  deadline: deadline,
-                                  maximumRetries: maximumRetries.flatMap({ $0 - 1 }))
+                                  retrier: &retrier)
         }
     }
 
