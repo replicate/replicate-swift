@@ -63,7 +63,7 @@ public struct Model: Hashable {
     public let licenseURL: URL?
 
     /// A description for the model.
-    public let description: String
+    public let description: String?
 
     /// The visibility of the model.
     public let visibility: Visibility
