@@ -29,7 +29,7 @@ if let latestVersion = model.latestVersion {
     let prompt = """
         a 19th century portrait of a wombat gentleman
     """
-    let prediction = try await client.createPrediction(latestVersion,
+    let prediction = try await client.createPrediction(version: latestVersion.id,
                                                        input: ["prompt": "\(prompt)"],
                                                        wait: true)
     print(prediction.output)
@@ -49,7 +49,7 @@ let model = try await client.getModel("tencentarc/gfpgan")
 if let latestVersion = model.latestVersion {
     let data = try! Data(contentsOf: URL(fileURLWithPath: "/path/to/image.jpg"))
     let mimeType = "image/jpeg"
-    let prediction = try await client.createPrediction(latestVersion,
+    let prediction = try await client.createPrediction(version: latestVersion.id,
                                                        input: ["img": "\(data.uriEncoded(mimeType: mimeType))"])
     print(prediction.output)
     // https://replicate.com/api/models/tencentarc/gfpgan/files/85f53415-0dc7-4703-891f-1e6f912119ad/output.png
@@ -64,7 +64,7 @@ let model = client.getModel("kvfrans/clipdraw")
 let prompt = """
     Watercolor painting of an underwater submarine
 """
-var prediction = client.createPrediction(model.latestVersion!,
+var prediction = client.createPrediction(version: model.latestVersion!.id,
                                          input: ["prompt": "\(prompt)"])
 print(prediction.status)
 // "starting"
@@ -82,7 +82,7 @@ let model = client.getModel("kvfrans/clipdraw")
 let prompt = """
     Watercolor painting of an underwater submarine
 """
-var prediction = client.createPrediction(model.latestVersion!,
+var prediction = client.createPrediction(version: model.latestVersion!.id,
                                          input: ["prompt": "\(prompt)"])
 print(prediction.status)
 // "starting"
