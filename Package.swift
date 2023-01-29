@@ -21,7 +21,7 @@ let package = Package(
     dependencies: [
         // Dependencies declare other packages that this package depends on.
         .package(url: "https://github.com/Flight-School/AnyCodable", .upToNextMinor(from: "0.6.6")),
-        .package(url: "https://github.com/mattt/OpenAPIKit", revision: "86e2a2a762efae13b482ad64b2abe416a7c85cd8"),
+        .package(url: "https://github.com/mattt/OpenAPIKit", exact: "2.5.1-fork.1"),
         .package(url: "https://github.com/apple/swift-argument-parser", .upToNextMinor(from: "1.1.4")),
         .package(url: "https://github.com/apple/swift-syntax.git", exact: "0.50700.00"),
         .package(url: "https://github.com/apple/swift-format.git", exact: "0.50700.00"),

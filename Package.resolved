@@ -14,7 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/mattt/OpenAPIKit",
       "state" : {
-        "revision" : "86e2a2a762efae13b482ad64b2abe416a7c85cd8"
+        "revision" : "ebd4e93d22ccc0404b4e431f19987b65523849d2",
+        "version" : "2.5.1-fork.1"
       }
     },
     {
