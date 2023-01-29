@@ -65,11 +65,12 @@ struct GenerateModelCommand: AsyncParsableCommand {
                      inheritanceClause: TypeInheritanceClause {
                 InheritedType(typeName: "Predictable")
             },
-                     modifiersBuilder: {
-                TokenSyntax.public
-                    .withLeadingTrivia(model.description.isEmpty ? .zero : .docLineComment("/// \(model.description)"))
-            },
-                     membersBuilder: {
+                modifiersBuilder: {
+                   TokenSyntax.public
+                       .withLeadingTrivia(model.description.flatMap({ description in
+                           .docLineComment("/// \(description)")}) ?? .zero)
+                },
+                membersBuilder: {
 
                 // static let modelID = "<modelID>"
                 VariableDecl(letOrVarKeyword: .let,
