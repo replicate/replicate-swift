@@ -11,6 +11,8 @@ import SwiftFormatConfiguration
 
 @main
 struct GenerateModelCommand: AsyncParsableCommand {
+    static let configuration = CommandConfiguration(commandName: "generate-replicate-model")
+    
     @Argument(help: "The model id.")
     var modelID: Model.ID
 
