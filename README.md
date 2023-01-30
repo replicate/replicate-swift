@@ -119,7 +119,7 @@ the following command generates code for the latest version of the
 
 ```console
 $ REPLICATE_API_TOKEN=<...> \
-    generate-replicate-model stability-ai/stable-diffusion
+    swift run generate-replicate-model stability-ai/stable-diffusion
 ```
 
 ```swift
