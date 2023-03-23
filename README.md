@@ -18,18 +18,18 @@ and passing it to `Client(token:)`:
 import Foundation
 import Replicate
 
-let client = Client(token: <#token#>)
+let replicate = Replicate.Client(token: <#token#>)
 ```
 
 You can run a model and get its output:
 
 ```swift
-let model = try await client.getModel("stability-ai/stable-diffusion")
+let model = try await replicate.getModel("stability-ai/stable-diffusion")
 if let latestVersion = model.latestVersion {
     let prompt = """
         a 19th century portrait of a wombat gentleman
     """
-    let prediction = try await client.createPrediction(version: latestVersion.id,
+    let prediction = try await replicate.createPrediction(version: latestVersion.id,
                                                        input: ["prompt": "\(prompt)"],
                                                        wait: true)
     print(prediction.output)
@@ -45,11 +45,11 @@ read the contents of the file into a `Data` object,
 and use the `uriEncoded(mimeType:) helper method to create a URI-encoded string.
 
 ```swift
-let model = try await client.getModel("tencentarc/gfpgan")
+let model = try await replicate.getModel("tencentarc/gfpgan")
 if let latestVersion = model.latestVersion {
     let data = try! Data(contentsOf: URL(fileURLWithPath: "/path/to/image.jpg"))
     let mimeType = "image/jpeg"
-    let prediction = try await client.createPrediction(version: latestVersion.id,
+    let prediction = try await replicate.createPrediction(version: latestVersion.id,
                                                        input: ["img": "\(data.uriEncoded(mimeType: mimeType))"])
     print(prediction.output)
     // https://replicate.com/api/models/tencentarc/gfpgan/files/85f53415-0dc7-4703-891f-1e6f912119ad/output.png
@@ -59,17 +59,17 @@ if let latestVersion = model.latestVersion {
 You can start a model and run it in the background:
 
 ```swift
-let model = client.getModel("kvfrans/clipdraw")
+let model = replicate.getModel("kvfrans/clipdraw")
 
 let prompt = """
     Watercolor painting of an underwater submarine
 """
-var prediction = client.createPrediction(version: model.latestVersion!.id,
+var prediction = replicate.createPrediction(version: model.latestVersion!.id,
                                          input: ["prompt": "\(prompt)"])
 print(prediction.status)
 // "starting"
 
-try await prediction.wait(with: client)
+try await prediction.wait(with: replicate)
 print(prediction.status)
 // "succeeded"
 ```
@@ -77,17 +77,17 @@ print(prediction.status)
 You can cancel a running prediction:
 
 ```swift
-let model = client.getModel("kvfrans/clipdraw")
+let model = replicate.getModel("kvfrans/clipdraw")
 
 let prompt = """
     Watercolor painting of an underwater submarine
 """
-var prediction = client.createPrediction(version: model.latestVersion!.id,
+var prediction = replicate.createPrediction(version: model.latestVersion!.id,
                                          input: ["prompt": "\(prompt)"])
 print(prediction.status)
 // "starting"
 
-try await prediction.cancel(with: client)
+try await prediction.cancel(with: replicate)
 print(prediction.status)
 // "canceled"
 ```
@@ -96,11 +96,11 @@ You can list all the predictions you've run:
 
 ```swift
 var predictions: [Prediction] = []
-var cursor: Client.Pagination<Prediction>.Cursor?
+var cursor: Replicate.Client.Pagination<Prediction>.Cursor?
 let limit = 100
 
 repeat {
-    let page = try await client.getPredictions(cursor: cursor)
+    let page = try await replicate.getPredictions(cursor: cursor)
     predictions.append(contentsOf: page.results)
     cursor = page.next
 } while predictions.count < limit && cursor != nil
@@ -232,7 +232,7 @@ you can now create predictions for the model with fully type-checked Swift code:
 var input = StableDiffusion.Input(prompt: "multicolor hyperspace")
 input.numOutputs = 4
 
-let prediction = try await StableDiffusion.predict(with: client, input: input)
+let prediction = try await StableDiffusion.predict(with: replicate, input: input)
 
 // `StableDiffusion.Output` is a typealias for `[URL]`
 for url in prediction.output ?? [] {
