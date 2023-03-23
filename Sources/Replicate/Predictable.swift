@@ -16,6 +16,9 @@ public protocol Predictable {
 // MARK: - Default Implementations
 
 extension Predictable {
+    /// The type of prediction created by the model
+    public typealias Prediction = Replicate.Prediction<Input, Output>
+
     /// Creates a prediction.
     ///
     /// - Parameters:
@@ -33,8 +36,8 @@ extension Predictable {
         with client: Client,
         input: Input,
         wait: Bool = false
-    ) async throws -> Prediction<Input, Output> {
-        return try await client.createPrediction(Prediction<Input, Output>.self,
+    ) async throws -> Prediction {
+        return try await client.createPrediction(Prediction.self,
                                                  version: Self.versionID,
                                                  input: input,
                                                  wait: wait)
