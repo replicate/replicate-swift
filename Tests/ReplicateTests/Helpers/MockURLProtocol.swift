@@ -60,28 +60,56 @@ class MockURLProtocol: URLProtocol {
                 """#
             case ("POST", "https://api.replicate.com/v1/predictions"?):
                 statusCode = 201
-
-                json = #"""
-                    {
-                      "id": "ufawqhfynnddngldkgtslldrkq",
-                      "version": "5c7d5dc6dd8bf75c1acaa8565735e7986bc5b66206b55cca93cb72c9bf15ccaa",
-                      "urls": {
-                        "get": "https://api.replicate.com/v1/predictions/ufawqhfynnddngldkgtslldrkq",
-                        "cancel": "https://api.replicate.com/v1/predictions/ufawqhfynnddngldkgtslldrkq/cancel"
-                      },
-                      "created_at": "2022-04-26T22:13:06.224088Z",
-                      "completed_at": "2022-04-26T22:13:06.580379Z",
-                      "source": "web",
-                      "status": "starting",
-                      "input": {
-                        "text": "Alice"
-                      },
-                      "output": null,
-                      "error": null,
-                      "logs": null,
-                      "metrics": {}
-                    }
-                """#
+                
+                if let body = request.json,
+                   body["version"] as? String == "invalid"
+                {
+                    json = #"""
+                        {
+                          "id": "ufawqhfynnddngldkgtslldrkq",
+                          "version": "invalid",
+                          "urls": {
+                            "get": "https://api.replicate.com/v1/predictions/ufawqhfynnddngldkgtslldrkq",
+                            "cancel": "https://api.replicate.com/v1/predictions/ufawqhfynnddngldkgtslldrkq/cancel"
+                          },
+                          "created_at": "2022-04-26T22:13:06.224088Z",
+                          "completed_at": "2022-04-26T22:13:06.580379Z",
+                          "source": "web",
+                          "status": "failed",
+                          "input": {
+                            "text": "Alice"
+                          },
+                          "output": null,
+                          "error": {
+                            "detail": "Invalid version"
+                          },
+                          "logs": null,
+                          "metrics": {}
+                        }
+                    """#
+                } else {
+                    json = #"""
+                        {
+                          "id": "ufawqhfynnddngldkgtslldrkq",
+                          "version": "5c7d5dc6dd8bf75c1acaa8565735e7986bc5b66206b55cca93cb72c9bf15ccaa",
+                          "urls": {
+                            "get": "https://api.replicate.com/v1/predictions/ufawqhfynnddngldkgtslldrkq",
+                            "cancel": "https://api.replicate.com/v1/predictions/ufawqhfynnddngldkgtslldrkq/cancel"
+                          },
+                          "created_at": "2022-04-26T22:13:06.224088Z",
+                          "completed_at": "2022-04-26T22:13:06.580379Z",
+                          "source": "web",
+                          "status": "starting",
+                          "input": {
+                            "text": "Alice"
+                          },
+                          "output": null,
+                          "error": null,
+                          "logs": null,
+                          "metrics": {}
+                        }
+                    """#
+                }
             case ("GET", "https://api.replicate.com/v1/predictions/ufawqhfynnddngldkgtslldrkq"?):
                 statusCode = 200
                 json = #"""
@@ -242,3 +270,26 @@ extension Client {
     }
 }
 
+private extension URLRequest {
+    var json: [String: Any]? {
+        var data = httpBody
+        if let stream = httpBodyStream {
+            let bufferSize = 1024
+            data = Data()
+            stream.open()
+            
+            while stream.hasBytesAvailable {
+                var buffer = [UInt8](repeating: 0, count: bufferSize)
+                let bytesRead = stream.read(&buffer, maxLength: bufferSize)
+                if bytesRead > 0 {
+                    data?.append(buffer, count: bytesRead)
+                } else {
+                    break
+                }
+            }
+        }
+        
+        guard let data = data else { return nil }
+        return try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
+    }
+}

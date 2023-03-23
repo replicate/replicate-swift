@@ -7,11 +7,21 @@ final class ClientTests: XCTestCase {
     static override func setUp() {
         URLProtocol.registerClass(MockURLProtocol.self)
     }
-    
+
     func testRun() async throws {
         let identifier: Identifier = "test/example:5c7d5dc6dd8bf75c1acaa8565735e7986bc5b66206b55cca93cb72c9bf15ccaa"
         let output = try await client.run(identifier, input: ["text": "Alice"])
         XCTAssertEqual(output, ["Hello, Alice!"])
+    }
+
+    func testRunWithInvalidVersion() async throws {
+        let identifier: Identifier = "test/example:invalid"
+        do {
+            _ = try await client.run(identifier, input: ["text": "Alice"])
+            XCTFail()
+        } catch {
+            XCTAssertEqual(error.localizedDescription, "Invalid version")
+        }
     }
 
     func testCreatePrediction() async throws {
@@ -20,6 +30,13 @@ final class ClientTests: XCTestCase {
         XCTAssertEqual(prediction.id, "ufawqhfynnddngldkgtslldrkq")
         XCTAssertEqual(prediction.versionID, version)
         XCTAssertEqual(prediction.status, .starting)
+    }
+
+    func testCreatePredictionWithInvalidVersion() async throws {
+        let version: Model.Version.ID = "invalid"
+        let prediction = try await client.createPrediction(version: version, input: ["text": "Alice"])
+        XCTAssertEqual(prediction.status, .failed)
+        XCTAssertEqual(prediction.error?.localizedDescription, "Invalid version")
     }
 
     func testCreatePredictionAndWait() async throws {
