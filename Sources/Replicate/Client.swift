@@ -57,6 +57,11 @@ public class Client {
                                                     input: input,
                                                     webhook: webhook,
                                                     wait: true)
+
+        if prediction.status == .failed {
+            throw prediction.error ?? Error(detail: "Prediction failed")
+        }
+
         return prediction.output
     }
 
