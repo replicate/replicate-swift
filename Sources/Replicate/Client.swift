@@ -25,6 +25,41 @@ public class Client {
         self.token = token
     }
 
+    /// Runs a model and waits for its output.
+    ///
+    /// - Parameters:
+    ///    - identifier:
+    ///        The model version identifier in the format "{owner}/{name}:{version}"
+    ///    - input:
+    ///        The input depends on what model you are running.
+    ///
+    ///        To see the available inputs,
+    ///        click the "Run with API" tab on the model you are running.
+    ///        For example, stability-ai/stable-diffusion
+    ///        takes `prompt` as an input.
+    ///    - webhook:
+    ///         A webhook that is called when the prediction has completed.
+    ///
+    ///         It will be a `POST` request where
+    ///         the request body is the same as
+    ///         the response body of the get prediction endpoint.
+    ///         If there are network problems,
+    ///         we will retry the webhook a few times,
+    ///         so make sure it can be safely called more than once.
+    public func run<Input: Codable, Output: Codable>(
+        _ identifier: Identifier,
+        input: Input,
+        webhook: URL? = nil,
+        _ type: Output.Type = AnyCodable
+    ) async throws -> Output? {
+        let prediction = try await createPrediction(Prediction<Input, Output>.self,
+                                                    version: identifier.version,
+                                                    input: input,
+                                                    webhook: webhook,
+                                                    wait: true)
+        return prediction.output
+    }
+
     /// Create a prediction
     ///
     /// - Parameters:
