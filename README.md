@@ -24,6 +24,18 @@ let replicate = Replicate.Client(token: <#token#>)
 You can run a model and get its output:
 
 ```swift
+let output = try await replicate.run(
+    "stability-ai/stable-diffusion:db21e45d3f7023abc2a46ee38a23973f6dce16bb082a930b0c49861f96d1e5bf", 
+    ["prompt": "a 19th century portrait of a wombat gentleman"]
+)
+
+print(output)
+// https://replicate.com/api/models/stability-ai/stable-diffusion/files/50fcac81-865d-499e-81ac-49de0cb79264/out-0.png
+```
+
+Or fetch a model by name and create a prediction against its latest version:
+
+```swift
 let model = try await replicate.getModel("stability-ai/stable-diffusion")
 if let latestVersion = model.latestVersion {
     let prompt = """
@@ -83,7 +95,7 @@ let prompt = """
     Watercolor painting of an underwater submarine
 """
 var prediction = replicate.createPrediction(version: model.latestVersion!.id,
-                                         input: ["prompt": "\(prompt)"])
+                                            input: ["prompt": "\(prompt)"])
 print(prediction.status)
 // "starting"
 
