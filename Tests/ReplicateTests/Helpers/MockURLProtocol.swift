@@ -168,9 +168,11 @@ class MockURLProtocol: URLProtocol {
                       "description": "A tiny model that says hello",
                       "visibility": "public",
                       "github_url": "https://github.com/replicate/cog-examples",
+                      "cover_image_url": "https://tjzk.replicate.delivery/models_models_cover_image/9c1f748e-a9fc-4cfd-a497-68262ee6151a/replicate-prediction-caujujsgrng7.png",
                       "paper_url": null,
                       "license_url": null,
-                      "latest_version": null
+                      "latest_version": null,
+                      "run_count": 12345
                     }
                 """#
             case ("GET", "https://api.replicate.com/v1/models/replicate/hello-world/versions"?):

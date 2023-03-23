@@ -62,6 +62,9 @@ public struct Model: Hashable {
     /// A link to the model's license.
     public let licenseURL: URL?
 
+    /// A link to a cover image for the model.
+    public let coverImageURL: URL?
+
     /// A description for the model.
     public let description: String?
 
@@ -70,6 +73,9 @@ public struct Model: Hashable {
 
     /// The latest version of the model, if any.
     public let latestVersion: Version?
+
+    /// The number of times this model has been run.
+    public let runCount: Int?
 }
 
 // MARK: - Identifiable
@@ -102,9 +108,11 @@ extension Model: Decodable {
         case githubURL = "github_url"
         case paperURL = "paper_url"
         case licenseURL = "license_url"
+        case coverImageURL = "cover_image_url"
         case description
         case visibility
         case latestVersion = "latest_version"
+        case runCount = "run_count"
     }
 }
 
