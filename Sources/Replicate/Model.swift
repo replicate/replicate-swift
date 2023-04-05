@@ -76,6 +76,8 @@ public struct Model: Hashable {
 
     /// The number of times this model has been run.
     public let runCount: Int?
+
+    public let defaultExample: AnyPrediction?
 }
 
 // MARK: - Identifiable
@@ -113,6 +115,7 @@ extension Model: Decodable {
         case visibility
         case latestVersion = "latest_version"
         case runCount = "run_count"
+        case defaultExample = "default_example"
     }
 }
 
