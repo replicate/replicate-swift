@@ -58,6 +58,13 @@ public enum Value: Hashable {
         return value
     }
 
+    /// Returns the data value and optional MIME type if the value is `data`,
+    /// otherwise returns `nil`.
+    public var dataValue: (mimeType: String?, Data)? {
+        guard case let .data(mimeType: mimeType, data) = self else { return nil }
+        return (mimeType: mimeType, data)
+    }
+
     /// Returns the `[Value]` value if the value is an `array`,
     /// otherwise returns `nil`.
     public var arrayValue: [Value]? {
