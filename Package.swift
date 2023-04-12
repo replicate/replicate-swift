@@ -14,17 +14,10 @@ let package = Package(
         .library(
             name: "Replicate",
             targets: ["Replicate"]),
-        .executable(
-            name: "generate-replicate-model",
-            targets: ["generate-replicate-model"]),
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
         .package(url: "https://github.com/Flight-School/AnyCodable", .upToNextMinor(from: "0.6.6")),
-        .package(url: "https://github.com/mattt/OpenAPIKit", exact: "2.5.1-fork.1"),
-        .package(url: "https://github.com/apple/swift-argument-parser", .upToNextMinor(from: "1.1.4")),
-        .package(url: "https://github.com/apple/swift-syntax.git", exact: "0.50700.00"),
-        .package(url: "https://github.com/apple/swift-format.git", exact: "0.50700.00"),
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
@@ -35,15 +28,6 @@ let package = Package(
                 .product(name: "AnyCodable", package: "AnyCodable"),
             ]
         ),
-        .executableTarget(
-            name: "generate-replicate-model",
-            dependencies: [
-                "Replicate",
-                .product(name: "ArgumentParser", package: "swift-argument-parser"),
-                .product(name: "SwiftSyntaxBuilder", package: "swift-syntax"),
-                .product(name: "SwiftFormat", package: "swift-format"),
-                .product(name: "OpenAPIKit", package: "OpenAPIKit")
-            ]),
         .testTarget(
             name: "ReplicateTests",
             dependencies: [
