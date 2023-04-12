@@ -4,8 +4,6 @@ import Foundation
 import FoundationNetworking
 #endif
 
-import AnyCodable
-
 /// A Replicate HTTP API client.
 ///
 /// See https://replicate.com/docs/reference/http
@@ -50,7 +48,7 @@ public class Client {
         _ identifier: Identifier,
         input: Input,
         webhook: URL? = nil,
-        _ type: Output.Type = AnyCodable.self
+        _ type: Output.Type = Value.self
     ) async throws -> Output? {
         let prediction = try await createPrediction(Prediction<Input, Output>.self,
                                                     version: identifier.version,
@@ -110,9 +108,9 @@ public class Client {
         webhook: URL? = nil,
         wait: Bool = false
     ) async throws -> Prediction<Input, Output> {
-        var params: [String: AnyEncodable] = [
+        var params: [String: Value] = [
             "version": "\(id)",
-            "input": AnyEncodable(input)
+            "input": try Value(input)
         ]
 
         if let webhook {
@@ -227,7 +225,7 @@ public class Client {
                                      _ path: String,
                                      cursor: Pagination.Cursor?)
     async throws -> Pagination.Page<T> {
-        var params: [String: AnyEncodable]? = nil
+        var params: [String: Value]? = nil
         if let cursor {
             params = ["cursor": "\(cursor)"]
         }
@@ -237,7 +235,7 @@ public class Client {
 
     private func fetch<T: Decodable>(_ method: Method,
                                      _ path: String,
-                                     params: [String: AnyEncodable]? = nil)
+                                     params: [String: Value]? = nil)
     async throws -> T {
         var urlComponents = URLComponents(string: "https://api.replicate.com/v1/" + path)
         var httpBody: Data? = nil

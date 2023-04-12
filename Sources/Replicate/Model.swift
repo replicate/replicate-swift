@@ -1,8 +1,6 @@
 import struct Foundation.Date
 import struct Foundation.URL
 
-import AnyCodable
-
 /// A machine learning model hosted on Replicate.
 public struct Model: Hashable {
     /// The visibility of the model.
@@ -23,7 +21,7 @@ public struct Model: Hashable {
         public let createdAt: Date
 
         /// An OpenAPI description of the model inputs and outputs.
-        public let openAPISchema: AnyCodable
+        public let openAPISchema: [String: Value]
     }
 
     /// A collection of models.
