@@ -50,7 +50,7 @@ public class Client {
         _ identifier: Identifier,
         input: Input,
         webhook: URL? = nil,
-        _ type: Output.Type = AnyCodable
+        _ type: Output.Type = AnyCodable.self
     ) async throws -> Output? {
         let prediction = try await createPrediction(Prediction<Input, Output>.self,
                                                     version: identifier.version,
@@ -104,7 +104,7 @@ public class Client {
     ///         in the original creation response
     ///         (``Prediction/status`` is `.starting`).
     public func createPrediction<Input: Codable, Output: Codable>(
-        _ type: Prediction<Input, Output>.Type = AnyPrediction,
+        _ type: Prediction<Input, Output>.Type = AnyPrediction.self,
         version id: Model.Version.ID,
         input: Input,
         webhook: URL? = nil,
@@ -132,7 +132,7 @@ public class Client {
     ///
     /// - Parameter id: The ID of the prediction you want to fetch.
     public func getPrediction<Input: Codable, Output: Codable>(
-        _ type: Prediction<Input, Output>.Type = AnyPrediction,
+        _ type: Prediction<Input, Output>.Type = AnyPrediction.self,
         id: Prediction.ID
     ) async throws -> Prediction<Input, Output> {
         return try await fetch(.get, "predictions/\(id)")
@@ -142,7 +142,7 @@ public class Client {
     ///
     /// - Parameter id: The ID of the prediction you want to fetch.
     public func cancelPrediction<Input: Codable, Output: Codable>(
-        _ type: Prediction<Input, Output>.Type = AnyPrediction,
+        _ type: Prediction<Input, Output>.Type = AnyPrediction.self,
         id: Prediction.ID
     ) async throws -> Prediction<Input, Output> {
         return try await fetch(.post, "predictions/\(id)/cancel")
@@ -152,7 +152,7 @@ public class Client {
     ///
     /// - Parameter cursor: A pointer to a page of results to fetch.
     public func getPredictions<Input: Codable, Output: Codable>(
-        _ type: Prediction<Input, Output>.Type = AnyPrediction,
+        _ type: Prediction<Input, Output>.Type = AnyPrediction.self,
         cursor: Pagination.Cursor? = nil
     ) async throws -> Pagination.Page<Prediction<Input, Output>>
     {
