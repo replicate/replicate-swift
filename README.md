@@ -6,8 +6,8 @@ and do various other things on Replicate.
 
 ## Requirements
 
-* macOS 12+ or iOS 15+
-* Swift 5.7
+- macOS 12+ or iOS 15+
+- Swift 5.7
 
 ## Usage
 
@@ -25,7 +25,7 @@ You can run a model and get its output:
 
 ```swift
 let output = try await replicate.run(
-    "stability-ai/stable-diffusion:db21e45d3f7023abc2a46ee38a23973f6dce16bb082a930b0c49861f96d1e5bf", 
+    "stability-ai/stable-diffusion:db21e45d3f7023abc2a46ee38a23973f6dce16bb082a930b0c49861f96d1e5bf",
     ["prompt": "a 19th century portrait of a wombat gentleman"]
 )
 
@@ -128,7 +128,7 @@ let package = Package(
     // name, platforms, products, etc.
     dependencies: [
         // other dependencies
-        .package(url: "https://github.com/mattt/replicate-swift", from: "0.9.0"),
+        .package(url: "https://github.com/mattt/replicate-swift", from: "0.10.0"),
     ],
     targets: [
         .target(name: "<target>", dependencies: [
