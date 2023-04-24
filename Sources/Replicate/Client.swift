@@ -138,7 +138,7 @@ public class Client {
 
     /// Cancel a prediction
     ///
-    /// - Parameter id: The ID of the prediction you want to fetch.
+    /// - Parameter id: The ID of the prediction you want to cancel.
     public func cancelPrediction<Input: Codable, Output: Codable>(
         _ type: Prediction<Input, Output>.Type = AnyPrediction.self,
         id: Prediction.ID
