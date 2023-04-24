@@ -26,12 +26,14 @@ extension Trainable {
     public static func train(
         with client: Client,
         destination: Model.ID,
-        input: Input
+        input: Input,
+        webhook: Webhook? = nil
     ) async throws -> Training
     {
         return try await client.createTraining(Training.self,
                                                version: Self.versionID,
                                                destination: destination,
-                                               input: input)
+                                               input: input,
+                                               webhook: webhook)
     }
 }
