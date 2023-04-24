@@ -8,6 +8,8 @@ import FoundationNetworking
 ///
 /// See https://replicate.com/docs/reference/http
 public class Client {
+    public let baseURLString: String
+    public let userAgent: String?
     private let token: String
     internal var session = URLSession(configuration: .default)
 
@@ -19,7 +21,19 @@ public class Client {
     /// [account page](https://replicate.com/account).
     ///
     /// - Parameter token: The API token.
-    public init(token: String) {
+    public init(
+        baseURLString: String = "https://api.replicate.com/v1/",
+        userAgent: String? = nil,
+        token: String
+    )
+    {
+        var baseURLString = baseURLString
+        if !baseURLString.hasSuffix("/") {
+            baseURLString = baseURLString.appending("/")
+        }
+
+        self.baseURLString = baseURLString
+        self.userAgent = userAgent
         self.token = token
     }
 
@@ -329,7 +343,7 @@ public class Client {
                                      _ path: String,
                                      params: [String: Value]? = nil)
     async throws -> T {
-        var urlComponents = URLComponents(string: "https://api.replicate.com/v1/" + path)
+        var urlComponents = URLComponents(string: self.baseURLString.appending(path))
         var httpBody: Data? = nil
 
         switch method {
@@ -360,6 +374,10 @@ public class Client {
         if let httpBody {
             request.httpBody = httpBody
             request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        }
+
+        if let userAgent {
+            request.addValue(userAgent, forHTTPHeaderField: "User-Agent")
         }
 
         let (data, response) = try await session.data(for: request)
