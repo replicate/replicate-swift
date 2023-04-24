@@ -30,16 +30,16 @@ public struct Training<Input>: Identifiable where Input: Codable {
         public let predictTime: TimeInterval?
     }
 
-    /// The unique ID of the prediction.
-    /// Can be used to get a single prediction.
+    /// The unique ID of the training.
+    /// Can be used to get a single training.
     ///
-    /// - SeeAlso: ``Client/getPrediction(id:)``
+    /// - SeeAlso: ``Client/getTraining(id:)``
     public let id: ID
 
-    /// The version of the model used to create the prediction.
+    /// The version of the model used to create the training.
     public let versionID: Model.Version.ID
 
-    /// Where the prediction was made.
+    /// Where the training was made.
     public let source: Source?
 
     /// The model's input as a JSON object.
@@ -54,16 +54,16 @@ public struct Training<Input>: Identifiable where Input: Codable {
     /// Files should be passed as data URLs or HTTP URLs.
     public let input: Input
 
-    /// The output of the model for the prediction, if completed successfully.
+    /// The output of the model for the training, if completed successfully.
     public let output: Output?
 
-    /// The status of the prediction.
+    /// The status of the training.
     public let status: Status
 
-    /// The error encountered during the prediction, if any.
+    /// The error encountered during the training, if any.
     public let error: Error?
 
-    /// Logging output for the prediction.
+    /// Logging output for the training.
     public let logs: String?
 
     /// Metrics for the training.

@@ -16,7 +16,7 @@ extension Trainable {
     /// The type of training created by the model
     public typealias Training = Replicate.Training<Input>
 
-    /// Creates a prediction.
+    /// Trains a new model on Replicate.
     ///
     /// - Parameters:
     ///     - client: The client used to make API requests.

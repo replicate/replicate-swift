@@ -1,20 +1,20 @@
 /// The status of the prediction or training.
 public enum Status: String, Hashable, Codable {
-    /// The prediction is starting up.
+    /// The prediction or training is starting up.
     /// If this status lasts longer than a few seconds,
     /// then it's typically because a new worker is being started to run the prediction.
     case starting
 
-    /// The `predict()` method of the model is currently running.
+    /// The `predict()` or `train()` method of the model is currently running.
     case processing
 
-    /// The prediction completed successfully.
+    /// The prediction or training completed successfully.
     case succeeded
 
-    /// The prediction encountered an error during processing.
+    /// The prediction or training encountered an error during processing.
     case failed
 
-    /// The prediction was canceled by the user.
+    /// The prediction or training was canceled by the user.
     case canceled
 
     public var terminated: Bool {
