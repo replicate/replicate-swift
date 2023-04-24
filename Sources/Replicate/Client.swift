@@ -214,6 +214,96 @@ public class Client {
         return try await fetch(.get, "collections/\(slug)")
     }
 
+    /// Train a model on Replicate.
+    ///
+    /// To find out which models can be trained,
+    /// check out the [trainable language models collection](https://replicate.com/collections/trainable-language-models).
+    ///
+    /// - Parameters:
+    ///    - model:
+    ///         The base model used to train a new version.
+    ///    - id:
+    ///         The ID of the base model version
+    ///         that you're using to train a new model version.
+    ///
+    ///         You can get your model's versions using the API,
+    ///         or find them on the website by clicking
+    ///         the "Versions" tab on the Replicate model page,
+    ///         e.g. replicate.com/replicate/hello-world/versions,
+    ///         then copying the full SHA256 hash from the URL.
+    ///
+    ///         The version ID is the same as the Docker image ID
+    ///         that's created when you build your model.
+    ///    - destination:
+    ///        The desired model to push to in the format `{owner}/{model_name}`.
+    ///        This should be an existing model owned by
+    ///        the user or organization making the API request.
+    ///    - input:
+    ///        An object containing inputs to the
+    ///        Cog model's `train()` function.
+    ///    - webhook:
+    ///         A webhook that is called when the training has completed.
+    ///
+    ///         It will be a `POST` request where
+    ///         the request body is the same as
+    ///         the response body of the get training endpoint.
+    ///         If there are network problems,
+    ///         we will retry the webhook a few times,
+    ///         so make sure it can be safely called more than once.
+    public func createTraining<Input: Codable>(
+        _ type: Training<Input>.Type = AnyTraining.self,
+        version: Model.Version.ID,
+        destination: Model.ID,
+        input: Input,
+        webhook: URL? = nil
+    ) async throws -> Training<Input>
+    {
+        var params: [String: Value] = [
+            "version": "\(version)",
+            "destination": "\(destination)",
+            "input": try Value(input)
+        ]
+
+        if let webhook {
+            params["webhook"] = "\(webhook.absoluteString)"
+        }
+
+        return try await fetch(.post, "trainings", params: params)
+    }
+
+    /// Get a training
+    ///
+    /// - Parameter id: The ID of the training you want to fetch.
+    public func getTraining<Input: Codable>(
+        _ type: Training<Input>.Type = AnyTraining.self,
+        id: Training.ID
+    ) async throws -> Training<Input>
+    {
+        return try await fetch(.get, "trainings/\(id)")
+    }
+
+    /// Cancel a training
+    ///
+    /// - Parameter id: The ID of the training you want to cancel.
+    public func cancelTraining<Input: Codable>(
+        _ type: Training<Input>.Type = AnyTraining.self,
+        id: Training.ID
+    ) async throws -> Training<Input>
+    {
+        return try await fetch(.post, "trainings/\(id)/cancel")
+    }
+
+    /// Get a list of trainings
+    ///
+    /// - Parameter cursor: A pointer to a page of results to fetch.
+    public func getTrainings<Input: Codable>(
+        _ type: Training<Input>.Type = AnyTraining.self,
+        cursor: Pagination.Cursor? = nil
+    ) async throws -> Pagination.Page<Training<Input>>
+    {
+        return try await fetch(.get, "trainings", cursor: cursor)
+    }
+
     // MARK: -
 
     private enum Method: String, Hashable {

@@ -418,6 +418,108 @@ class MockURLProtocol: URLProtocol {
                       "models": []
                     }
                 """#
+            case ("GET", "https://api.replicate.com/v1/trainings"?):
+                statusCode = 200
+                json = #"""
+                    {
+                      "previous": null,
+                      "next": "https://api.replicate.com/v1/trainings?cursor=g5FWfcbO0EdVeR27rkXr0Z6tI0MjrW34ZejxnGzDeND3phpWWsyMGCQD",
+                      "results": [
+                        {
+                          "id": "zz4ibbonubfz7carwiefibzgga",
+                          "version": "4a056052b8b98f6db8d011a450abbcd09a408ec9280c29f22d3538af1099646a",
+                          "urls": {
+                            "get": "https://api.replicate.com/v1/trainings/ufawqhfynnddngldkgtslldrkq",
+                            "cancel": "https://api.replicate.com/v1/trainings/ufawqhfynnddngldkgtslldrkq/cancel"
+                          },
+                          "created_at": "2022-04-26T22:13:06.224088Z",
+                          "completed_at": "2022-04-26T22:13:06.580379Z",
+                          "source": "web",
+                          "status": "starting",
+                          "input": {
+                            "data": "..."
+                          },
+                          "output": null,
+                          "error": null,
+                          "logs": null,
+                          "metrics": {}
+                        }
+                      ]
+                    }
+                """#
+            case ("POST", "https://api.replicate.com/v1/trainings"?):
+                statusCode = 201
+
+                json = #"""
+                    {
+                      "id": "zz4ibbonubfz7carwiefibzgga",
+                      "version": "4a056052b8b98f6db8d011a450abbcd09a408ec9280c29f22d3538af1099646a",
+                      "urls": {
+                        "get": "https://api.replicate.com/v1/trainings/ufawqhfynnddngldkgtslldrkq",
+                        "cancel": "https://api.replicate.com/v1/trainings/ufawqhfynnddngldkgtslldrkq/cancel"
+                      },
+                      "created_at": "2022-04-26T22:13:06.224088Z",
+                      "completed_at": "2022-04-26T22:13:06.580379Z",
+                      "source": "web",
+                      "status": "starting",
+                      "input": {
+                        "data": "..."
+                      },
+                      "output": null,
+                      "error": null,
+                      "logs": null,
+                      "metrics": {}
+                    }
+                """#
+            case ("GET", "https://api.replicate.com/v1/trainings/zz4ibbonubfz7carwiefibzgga"?):
+                statusCode = 200
+                json = #"""
+                    {
+                      "id": "zz4ibbonubfz7carwiefibzgga",
+                      "version": "4a056052b8b98f6db8d011a450abbcd09a408ec9280c29f22d3538af1099646a",
+                      "urls": {
+                        "get": "https://api.replicate.com/v1/trainings/ufawqhfynnddngldkgtslldrkq",
+                        "cancel": "https://api.replicate.com/v1/trainings/ufawqhfynnddngldkgtslldrkq/cancel"
+                      },
+                      "created_at": "2023-04-23T22:13:06.224088Z",
+                      "completed_at": "2023-04-23T22:15:06.224088Z",
+                      "source": "web",
+                      "status": "succeeded",
+                      "input": {
+                        "data": "..."
+                      },
+                      "output": {
+                        "version": "b024d792ace1084d2504b2fc3012f013cef3b99842add1e7d82d2136ea1b78ac",
+                        "weights": "https://relicate.delivery/example-weights.tar.gz"
+                      },
+                      "error": null,
+                      "logs": "",
+                      "metrics": {}
+                    }
+                """#
+            case ("POST", "https://api.replicate.com/v1/trainings/zz4ibbonubfz7carwiefibzgga/cancel"?):
+                statusCode = 200
+                json = #"""
+                    {
+                      "id": "zz4ibbonubfz7carwiefibzgga",
+                      "version": "4a056052b8b98f6db8d011a450abbcd09a408ec9280c29f22d3538af1099646a",
+                      "urls": {
+                        "get": "https://api.replicate.com/v1/trainings/ufawqhfynnddngldkgtslldrkq",
+                        "cancel": "https://api.replicate.com/v1/trainings/ufawqhfynnddngldkgtslldrkq/cancel"
+                      },
+                      "created_at": "2023-04-23T22:13:06.224088Z",
+                      "completed_at": "2023-04-23T22:15:06.224088Z",
+                      "source": "web",
+                      "status": "canceled",
+                      "input": {
+                        "data": "..."
+                      },
+                      "output": null,
+                      "error": null,
+                      "logs": "",
+                      "metrics": {}
+                    }
+                """#
             default:
                 client?.urlProtocol(self, didFailWithError: URLError(.badURL))
                 return
