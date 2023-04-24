@@ -35,11 +35,13 @@ extension Predictable {
     public static func predict(
         with client: Client,
         input: Input,
+        webhook: Webhook? = nil,
         wait: Bool = false
     ) async throws -> Prediction {
         return try await client.createPrediction(Prediction.self,
                                                  version: Self.versionID,
                                                  input: input,
+                                                 webhook: webhook,
                                                  wait: wait)
     }
 }
