@@ -92,6 +92,36 @@ final class ClientTests: XCTestCase {
         XCTAssertEqual(collection.slug, "super-resolution")
     }
 
+    func testCreateTraining() async throws {
+        let version: Model.Version.ID = "4a056052b8b98f6db8d011a450abbcd09a408ec9280c29f22d3538af1099646a"
+        let destination: Model.ID = "my/fork"
+        let training = try await client.createTraining(version: version, destination: destination, input: ["data": "..."])
+        XCTAssertEqual(training.id, "zz4ibbonubfz7carwiefibzgga")
+        XCTAssertEqual(training.versionID, version)
+        XCTAssertEqual(training.status, .starting)
+    }
+
+    func testGetTraining() async throws {
+        let training = try await client.getTraining(id: "zz4ibbonubfz7carwiefibzgga")
+        XCTAssertEqual(training.id, "zz4ibbonubfz7carwiefibzgga")
+        XCTAssertEqual(training.versionID, "4a056052b8b98f6db8d011a450abbcd09a408ec9280c29f22d3538af1099646a")
+        XCTAssertEqual(training.source, .web)
+        XCTAssertEqual(training.status, .succeeded)
+        XCTAssertEqual(training.createdAt.timeIntervalSinceReferenceDate, 703980786.224, accuracy: 1)
+    }
+
+    func testCancelTraining() async throws {
+        let training = try await client.cancelTraining(id: "zz4ibbonubfz7carwiefibzgga")
+        XCTAssertEqual(training.id, "zz4ibbonubfz7carwiefibzgga")
+    }
+
+    func testGetTrainings() async throws {
+        let trainings = try await client.getTrainings()
+        XCTAssertNil(trainings.previous)
+        XCTAssertEqual(trainings.next, "g5FWfcbO0EdVeR27rkXr0Z6tI0MjrW34ZejxnGzDeND3phpWWsyMGCQD")
+        XCTAssertEqual(trainings.results.count, 1)
+    }
+
     func testUnauthenticated() async throws {
         do {
             let _ = try await Client.unauthenticated.getPredictions()
