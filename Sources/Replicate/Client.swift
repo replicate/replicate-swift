@@ -47,7 +47,7 @@ public class Client {
     public func run<Input: Codable, Output: Codable>(
         _ identifier: Identifier,
         input: Input,
-        webhook: URL? = nil,
+        webhook: Webhook? = nil,
         _ type: Output.Type = Value.self
     ) async throws -> Output? {
         let prediction = try await createPrediction(Prediction<Input, Output>.self,
@@ -105,7 +105,7 @@ public class Client {
         _ type: Prediction<Input, Output>.Type = AnyPrediction.self,
         version id: Model.Version.ID,
         input: Input,
-        webhook: URL? = nil,
+        webhook: Webhook? = nil,
         wait: Bool = false
     ) async throws -> Prediction<Input, Output> {
         var params: [String: Value] = [
@@ -114,7 +114,8 @@ public class Client {
         ]
 
         if let webhook {
-            params["webhook"] = "\(webhook.absoluteString)"
+            params["webhook"] = "\(webhook.url.absoluteString)"
+            params["webhook_events_filter"] = .array(webhook.events.map { "\($0.rawValue)" })
         }
 
         var prediction: Prediction<Input, Output> = try await fetch(.post, "predictions", params: params)
@@ -255,7 +256,7 @@ public class Client {
         version: Model.Version.ID,
         destination: Model.ID,
         input: Input,
-        webhook: URL? = nil
+        webhook: Webhook? = nil
     ) async throws -> Training<Input>
     {
         var params: [String: Value] = [
@@ -265,7 +266,8 @@ public class Client {
         ]
 
         if let webhook {
-            params["webhook"] = "\(webhook.absoluteString)"
+            params["webhook"] = "\(webhook.url.absoluteString)"
+            params["webhook_events_filter"] = .array(webhook.events.map { "\($0.rawValue)" })
         }
 
         return try await fetch(.post, "trainings", params: params)
