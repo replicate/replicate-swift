@@ -4,7 +4,6 @@ import Foundation
 import FoundationNetworking
 #endif
 
-import AnyCodable
 @testable import Replicate
 
 class MockURLProtocol: URLProtocol {

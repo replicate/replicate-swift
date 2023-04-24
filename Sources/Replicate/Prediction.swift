@@ -2,10 +2,8 @@ import struct Foundation.Date
 import struct Foundation.TimeInterval
 import struct Dispatch.DispatchTime
 
-import AnyCodable
-
 /// A prediction with unspecified inputs and outputs.
-public typealias AnyPrediction = Prediction<AnyCodable, AnyCodable>
+public typealias AnyPrediction = Prediction<[String: Value], Value>
 
 /// A prediction made by a model hosted on Replicate.
 public struct Prediction<Input, Output>: Identifiable where Input: Codable, Output: Codable {
