@@ -128,7 +128,7 @@ let package = Package(
     // name, platforms, products, etc.
     dependencies: [
         // other dependencies
-        .package(url: "https://github.com/mattt/replicate-swift", from: "0.8.1"),
+        .package(url: "https://github.com/mattt/replicate-swift", from: "0.9.0"),
     ],
     targets: [
         .target(name: "<target>", dependencies: [
