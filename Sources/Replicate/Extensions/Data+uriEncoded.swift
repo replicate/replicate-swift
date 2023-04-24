@@ -1,8 +1,10 @@
 import Foundation
 
+private let dataURIPrefix = "data:"
+
 public extension Data {
     static func isURIEncoded(string: String) -> Bool {
-        return string.hasPrefix("data:")
+        return string.hasPrefix(dataURIPrefix)
     }
 
     static func decode(uriEncoded string: String) -> (mimeType: String, data: Data)? {
@@ -10,7 +12,7 @@ public extension Data {
             return nil
         }
 
-        let components = string.components(separatedBy: ",")
+        let components = string.dropFirst(dataURIPrefix.count).components(separatedBy: ",")
         guard components.count == 2,
               let dataScheme = components.first,
               let dataBase64 = components.last
