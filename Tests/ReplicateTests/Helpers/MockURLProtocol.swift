@@ -408,6 +408,22 @@ class MockURLProtocol: URLProtocol {
                         "openapi_schema": {}
                     }
                 """#
+            case ("GET", "https://api.replicate.com/v1/collections"?):
+                statusCode = 200
+                json = #"""
+                    {
+                      "results": [
+                        {
+                          "name": "Super resolution",
+                          "slug": "super-resolution",
+                          "description": "Upscaling models that create high-quality images from low-quality images.",
+                          "models": []
+                        }
+                      ],
+                      "next": null,
+                      "previous": null
+                    }
+                """#
             case ("GET", "https://api.replicate.com/v1/collections/super-resolution"?),
                 ("GET", "https://v1.replicate.proxy/collections/super-resolution"?):
                 statusCode = 200
