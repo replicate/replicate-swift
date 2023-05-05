@@ -8,11 +8,19 @@ import FoundationNetworking
 ///
 /// See https://replicate.com/docs/reference/http
 public class Client {
+    /// The base URL for requests made by the client.
     public let baseURLString: String
+
+    /// The value for the `User-Agent` header sent in requests, if any.
     public let userAgent: String?
+
+    /// The API token used in the `Authorization` header sent in requests.
     private let token: String
+
+    /// The underlying client session.
     internal var session = URLSession(configuration: .default)
 
+    /// The retry policy for requests made by the client.
     public var retryPolicy: RetryPolicy = .default
 
     /// Creates a client with the specified API token.
