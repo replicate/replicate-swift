@@ -417,7 +417,6 @@ class MockURLProtocol: URLProtocol {
                           "name": "Super resolution",
                           "slug": "super-resolution",
                           "description": "Upscaling models that create high-quality images from low-quality images.",
-                          "models": []
                         }
                       ],
                       "next": null,

@@ -39,7 +39,7 @@ public struct Model: Hashable {
         public let description: String
 
         /// A list of models in the collection.
-        public let models: [Model]
+        public let models: [Model]?
     }
 
     /// The name of the user or organization that owns the model.

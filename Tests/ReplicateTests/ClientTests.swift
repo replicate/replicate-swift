@@ -90,7 +90,13 @@ final class ClientTests: XCTestCase {
     func testListModelCollections() async throws {
         let collections = try await client.listModelCollections()
         XCTAssertEqual(collections.results.count, 1)
+
         XCTAssertEqual(collections.results.first?.slug, "super-resolution")
+        XCTAssertEqual(collections.results.first?.models, nil)
+
+        let collection = try await client.getModelCollection(collections.results.first!.slug)
+        XCTAssertEqual(collection.slug, "super-resolution")
+        XCTAssertEqual(collection.models, [])
     }
 
     func testGetModelCollection() async throws {
