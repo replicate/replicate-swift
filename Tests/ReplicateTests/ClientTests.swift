@@ -62,7 +62,7 @@ final class ClientTests: XCTestCase {
     }
 
     func testGetPredictions() async throws {
-        let predictions = try await client.getPredictions()
+        let predictions = try await client.listPredictions()
         XCTAssertNil(predictions.previous)
         XCTAssertEqual(predictions.next, "cD0yMDIyLTAxLTIxKzIzJTNBMTglM0EyNC41MzAzNTclMkIwMCUzQTAw")
         XCTAssertEqual(predictions.results.count, 1)
@@ -75,7 +75,7 @@ final class ClientTests: XCTestCase {
     }
 
     func testGetModelVersions() async throws {
-        let versions = try await client.getModelVersions("replicate/hello-world")
+        let versions = try await client.listModelVersions("replicate/hello-world")
         XCTAssertNil(versions.previous)
         XCTAssertNil(versions.next)
         XCTAssertEqual(versions.results.count, 2)
@@ -122,7 +122,7 @@ final class ClientTests: XCTestCase {
     }
 
     func testGetTrainings() async throws {
-        let trainings = try await client.getTrainings()
+        let trainings = try await client.listTrainings()
         XCTAssertNil(trainings.previous)
         XCTAssertEqual(trainings.next, "g5FWfcbO0EdVeR27rkXr0Z6tI0MjrW34ZejxnGzDeND3phpWWsyMGCQD")
         XCTAssertEqual(trainings.results.count, 1)
@@ -130,7 +130,7 @@ final class ClientTests: XCTestCase {
 
     func testUnauthenticated() async throws {
         do {
-            let _ = try await Client.unauthenticated.getPredictions()
+            let _ = try await Client.unauthenticated.listPredictions()
             XCTFail("unauthenticated requests should fail")
         } catch {
             guard let error = error as? Replicate.Error else {

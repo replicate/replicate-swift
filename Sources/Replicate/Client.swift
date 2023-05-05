@@ -127,6 +127,26 @@ public class Client {
         }
     }
 
+    @available(*, deprecated, renamed: "listPredictions(_:cursor:)")
+    public func getPredictions<Input: Codable, Output: Codable>(
+        _ type: Prediction<Input, Output>.Type = AnyPrediction.self,
+        cursor: Pagination.Cursor? = nil
+    ) async throws -> Pagination.Page<Prediction<Input, Output>>
+    {
+        return try await listPredictions(type, cursor: cursor)
+    }
+
+    /// List predictions
+    ///
+    /// - Parameter cursor: A pointer to a page of results to fetch.
+    public func listPredictions<Input: Codable, Output: Codable>(
+        _ type: Prediction<Input, Output>.Type = AnyPrediction.self,
+        cursor: Pagination.Cursor? = nil
+    ) async throws -> Pagination.Page<Prediction<Input, Output>>
+    {
+        return try await fetch(.get, "predictions", cursor: cursor)
+    }
+
     /// Get a prediction
     ///
     /// - Parameter id: The ID of the prediction you want to fetch.
@@ -147,17 +167,6 @@ public class Client {
         return try await fetch(.post, "predictions/\(id)/cancel")
     }
 
-    /// Get a list of predictions
-    ///
-    /// - Parameter cursor: A pointer to a page of results to fetch.
-    public func getPredictions<Input: Codable, Output: Codable>(
-        _ type: Prediction<Input, Output>.Type = AnyPrediction.self,
-        cursor: Pagination.Cursor? = nil
-    ) async throws -> Pagination.Page<Prediction<Input, Output>>
-    {
-        return try await fetch(.get, "predictions", cursor: cursor)
-    }
-
     /// Get a model
     ///
     /// - Parameters:
@@ -171,7 +180,16 @@ public class Client {
         return try await fetch(.get, "models/\(id)")
     }
 
-    /// Get a list of model versions
+
+    @available(*, deprecated, renamed: "listModelVersions(_:cursor:)")
+    public func getModelVersions(_ id: Model.ID,
+                                 cursor: Pagination.Cursor? = nil)
+        async throws -> Pagination.Page<Model.Version>
+    {
+        return try await listModelVersions(id, cursor: cursor)
+    }
+
+    /// List model versions
     ///
     /// - Parameters:
     ///    - id: The model identifier, comprising
@@ -179,7 +197,7 @@ public class Client {
     ///          the name of the model.
     ///          For example, "stability-ai/stable-diffusion".
     ///    - cursor: A pointer to a page of results to fetch.
-    public func getModelVersions(_ id: Model.ID,
+    public func listModelVersions(_ id: Model.ID,
                                  cursor: Pagination.Cursor? = nil)
         async throws -> Pagination.Page<Model.Version>
     {
@@ -282,6 +300,26 @@ public class Client {
         return try await fetch(.post, "trainings", params: params)
     }
 
+    @available(*, deprecated, renamed: "listTrainings(_:cursor:)")
+    public func getTrainings<Input: Codable>(
+        _ type: Training<Input>.Type = AnyTraining.self,
+        cursor: Pagination.Cursor? = nil
+    ) async throws -> Pagination.Page<Training<Input>>
+    {
+        return try await listTrainings(type, cursor: cursor)
+    }
+
+    /// List trainings
+    ///
+    /// - Parameter cursor: A pointer to a page of results to fetch.
+    public func listTrainings<Input: Codable>(
+        _ type: Training<Input>.Type = AnyTraining.self,
+        cursor: Pagination.Cursor? = nil
+    ) async throws -> Pagination.Page<Training<Input>>
+    {
+        return try await fetch(.get, "trainings", cursor: cursor)
+    }
+
     /// Get a training
     ///
     /// - Parameter id: The ID of the training you want to fetch.
@@ -302,17 +340,6 @@ public class Client {
     ) async throws -> Training<Input>
     {
         return try await fetch(.post, "trainings/\(id)/cancel")
-    }
-
-    /// Get a list of trainings
-    ///
-    /// - Parameter cursor: A pointer to a page of results to fetch.
-    public func getTrainings<Input: Codable>(
-        _ type: Training<Input>.Type = AnyTraining.self,
-        cursor: Pagination.Cursor? = nil
-    ) async throws -> Pagination.Page<Training<Input>>
-    {
-        return try await fetch(.get, "trainings", cursor: cursor)
     }
 
     // MARK: -
