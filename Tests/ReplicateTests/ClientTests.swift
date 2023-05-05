@@ -128,6 +128,12 @@ final class ClientTests: XCTestCase {
         XCTAssertEqual(trainings.results.count, 1)
     }
 
+    func testCustomBaseURL() async throws {
+        let client = Client(baseURLString: "https://v1.replicate.proxy", token: MockURLProtocol.validToken).mocked
+        let collection = try await client.getModelCollection("super-resolution")
+        XCTAssertEqual(collection.slug, "super-resolution")
+    }
+
     func testUnauthenticated() async throws {
         do {
             let _ = try await Client.unauthenticated.listPredictions()

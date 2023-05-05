@@ -424,7 +424,8 @@ class MockURLProtocol: URLProtocol {
                       "previous": null
                     }
                 """#
-            case ("GET", "https://api.replicate.com/v1/collections/super-resolution"?):
+            case ("GET", "https://api.replicate.com/v1/collections/super-resolution"?),
+                ("GET", "https://v1.replicate.proxy/collections/super-resolution"?):
                 statusCode = 200
                 json = #"""
                     {
@@ -583,7 +584,7 @@ extension Client {
         return Client(token: "").mocked
     }
 
-    private var mocked: Self {
+    var mocked: Self {
         let configuration = session.configuration
         configuration.protocolClasses = [MockURLProtocol.self]
         session = URLSession(configuration: configuration)
