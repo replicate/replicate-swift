@@ -201,6 +201,15 @@ public class Client {
         return try await fetch(.get, "models/\(id)/versions/\(version)")
     }
 
+    /// List collections of models
+    /// - Parameters:
+    ///     - Parameter cursor: A pointer to a page of results to fetch.
+    public func listModelCollections(cursor: Pagination.Cursor? = nil)
+        async throws -> Pagination.Page<Model.Collection>
+    {
+        return try await fetch(.get, "collections")
+    }
+
     /// Get a collection of models
     ///
     /// - Parameters:
