@@ -12,7 +12,7 @@ and do various other things on Replicate.
 ## Usage
 
 Grab your API token from [replicate.com/account](https://replicate.com/account)
-and passing it to `Client(token:)`:
+and pass it to `Client(token:)`:
 
 ```swift
 import Foundation
@@ -20,6 +20,11 @@ import Replicate
 
 let replicate = Replicate.Client(token: <#token#>)
 ```
+
+> **Warning**
+>
+> Don't store secrets in code or any other resources bundled with your app.
+> Instead, fetch them from CloudKit or another server and store them in the keychain.
 
 You can run a model and get its output:
 
