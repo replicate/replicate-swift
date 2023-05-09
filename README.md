@@ -35,7 +35,7 @@ let output = try await replicate.run(
 )
 
 print(output)
-// https://replicate.com/api/models/stability-ai/stable-diffusion/files/50fcac81-865d-499e-81ac-49de0cb79264/out-0.png
+// ["https://replicate.com/api/models/stability-ai/stable-diffusion/files/50fcac81-865d-499e-81ac-49de0cb79264/out-0.png"]
 ```
 
 Or fetch a model by name and create a prediction against its latest version:
@@ -50,7 +50,7 @@ if let latestVersion = model.latestVersion {
                                                        input: ["prompt": "\(prompt)"],
                                                        wait: true)
     print(prediction.output)
-    // https://replicate.com/api/models/stability-ai/stable-diffusion/files/50fcac81-865d-499e-81ac-49de0cb79264/out-0.png
+    // ["https://replicate.com/api/models/stability-ai/stable-diffusion/files/50fcac81-865d-499e-81ac-49de0cb79264/out-0.png"]
 }
 ```
 
@@ -69,7 +69,7 @@ if let latestVersion = model.latestVersion {
     let prediction = try await replicate.createPrediction(version: latestVersion.id,
                                                        input: ["img": "\(data.uriEncoded(mimeType: mimeType))"])
     print(prediction.output)
-    // https://replicate.com/api/models/tencentarc/gfpgan/files/85f53415-0dc7-4703-891f-1e6f912119ad/output.png
+    // ["https://replicate.com/api/models/tencentarc/gfpgan/files/85f53415-0dc7-4703-891f-1e6f912119ad/output.png"]
 }
 ```
 
