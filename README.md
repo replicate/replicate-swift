@@ -4,6 +4,8 @@ This is a Swift client for [Replicate].
 It lets you run models from your Swift code,
 and do various other things on Replicate.
 
+To learn how to use it, [take a look at our guide to building a SwiftUI app with Replicate](https://replicate.com/docs/get-started/swiftui).
+
 ## Requirements
 
 - macOS 12+ or iOS 15+
