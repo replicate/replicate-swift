@@ -107,7 +107,7 @@ public struct Prediction<Input, Output>: Identifiable where Input: Codable, Outp
     public static func wait(
         for current: Self,
         with client: Client,
-        priority: TaskPriority?,
+        priority: TaskPriority? = nil,
         retrier: inout Client.RetryPolicy.Iterator
     ) async throws -> Self {
         guard !current.status.terminated else { return current }
