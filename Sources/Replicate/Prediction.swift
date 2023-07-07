@@ -83,21 +83,31 @@ public struct Prediction<Input, Output>: Identifiable where Input: Codable, Outp
     ///     - maximumRetries: If specified,
     ///                       the maximum number of requests to make to the API
     ///                       before throwing ``CancellationError``.
+    /// - Throws: ``CancellationError`` if the prediction was canceled.
     public mutating func wait(
         with client: Client,
         priority: TaskPriority? = nil
     ) async throws {
-        var retrier = client.retryPolicy.makeIterator()
+        var retrier: Client.RetryPolicy.Retrier = client.retryPolicy.makeIterator()
         self = try await Self.wait(for: self,
                                    with: client,
                                    priority: priority,
                                    retrier: &retrier)
     }
 
-    private static func wait(
+    /// Waits for a prediction to complete and returns the updated prediction.
+    ///
+    /// - Parameters:
+    ///     - current: The prediction to wait for.
+    ///     - client: The client used to make API requests.
+    ///     - priority: The task priority.
+    ///     - retrier: An instance of the client retry policy.
+    /// - Returns: The updated prediction.
+    /// - Throws: ``CancellationError`` if the prediction was canceled.
+    public static func wait(
         for current: Self,
         with client: Client,
-        priority: TaskPriority?,
+        priority: TaskPriority? = nil,
         retrier: inout Client.RetryPolicy.Iterator
     ) async throws -> Self {
         guard !current.status.terminated else { return current }
