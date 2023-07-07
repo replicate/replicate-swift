@@ -88,7 +88,7 @@ public struct Prediction<Input, Output>: Identifiable where Input: Codable, Outp
         with client: Client,
         priority: TaskPriority? = nil
     ) async throws {
-        var retrier = client.retryPolicy.makeIterator()
+        var retrier: Client.RetryPolicy.Retrier = client.retryPolicy.makeIterator()
         self = try await Self.wait(for: self,
                                    with: client,
                                    priority: priority,
@@ -101,7 +101,7 @@ public struct Prediction<Input, Output>: Identifiable where Input: Codable, Outp
     ///     - current: The prediction to wait for.
     ///     - client: The client used to make API requests.
     ///     - priority: The task priority.
-    ///     - retrier: The retrier used to determine when to retry.
+    ///     - retrier: An instance of the client retry policy.
     /// - Returns: The updated prediction.
     /// - Throws: ``CancellationError`` if the prediction was canceled.
     public static func wait(
