@@ -94,7 +94,16 @@ public struct Prediction<Input, Output>: Identifiable where Input: Codable, Outp
                                    retrier: &retrier)
     }
 
-    private static func wait(
+    /// Waits for a prediction to complete and returns the updated prediction.
+    ///
+    /// - Parameters:
+    ///     - current: The prediction to wait for.
+    ///     - client: The client used to make API requests.
+    ///     - priority: The task priority.
+    ///     - retrier: The retrier used to determine when to retry.
+    /// - Returns: The updated prediction.
+    /// - Throws: ``CancellationError`` if the prediction was canceled.
+    public static func wait(
         for current: Self,
         with client: Client,
         priority: TaskPriority?,
