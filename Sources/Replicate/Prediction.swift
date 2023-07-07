@@ -83,6 +83,7 @@ public struct Prediction<Input, Output>: Identifiable where Input: Codable, Outp
     ///     - maximumRetries: If specified,
     ///                       the maximum number of requests to make to the API
     ///                       before throwing ``CancellationError``.
+    /// - Throws: ``CancellationError`` if the prediction was canceled.
     public mutating func wait(
         with client: Client,
         priority: TaskPriority? = nil
