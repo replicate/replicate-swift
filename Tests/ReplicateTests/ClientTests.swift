@@ -121,6 +121,7 @@ final class ClientTests: XCTestCase {
         XCTAssertEqual(training.source, .web)
         XCTAssertEqual(training.status, .succeeded)
         XCTAssertEqual(training.createdAt.timeIntervalSinceReferenceDate, 703980786.224, accuracy: 1)
+        XCTAssertEqual(training.urls["cancel"]?.absoluteString, "https://api.replicate.com/v1/trainings/zz4ibbonubfz7carwiefibzgga/cancel")
     }
 
     func testCancelTraining() async throws {

@@ -75,6 +75,9 @@ public struct Training<Input>: Identifiable where Input: Codable {
     /// When the training was completed.
     public let completedAt: Date?
 
+    /// A convenience object that can be used to construct new API requests against the given training.
+    public let urls: [String: URL]
+
     // MARK: -
 
     /// Cancel the training.
@@ -101,6 +104,7 @@ extension Training: Codable {
         case metrics
         case createdAt = "created_at"
         case completedAt = "completed_at"
+        case urls
     }
 }
 
