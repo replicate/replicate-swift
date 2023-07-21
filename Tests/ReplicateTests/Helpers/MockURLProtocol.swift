@@ -445,8 +445,8 @@ class MockURLProtocol: URLProtocol {
                           "id": "zz4ibbonubfz7carwiefibzgga",
                           "version": "4a056052b8b98f6db8d011a450abbcd09a408ec9280c29f22d3538af1099646a",
                           "urls": {
-                            "get": "https://api.replicate.com/v1/trainings/ufawqhfynnddngldkgtslldrkq",
-                            "cancel": "https://api.replicate.com/v1/trainings/ufawqhfynnddngldkgtslldrkq/cancel"
+                            "get": "https://api.replicate.com/v1/trainings/zz4ibbonubfz7carwiefibzgga",
+                            "cancel": "https://api.replicate.com/v1/trainings/zz4ibbonubfz7carwiefibzgga/cancel"
                           },
                           "created_at": "2022-04-26T22:13:06.224088Z",
                           "completed_at": "2022-04-26T22:13:06.580379Z",
@@ -471,8 +471,8 @@ class MockURLProtocol: URLProtocol {
                       "id": "zz4ibbonubfz7carwiefibzgga",
                       "version": "4a056052b8b98f6db8d011a450abbcd09a408ec9280c29f22d3538af1099646a",
                       "urls": {
-                        "get": "https://api.replicate.com/v1/trainings/ufawqhfynnddngldkgtslldrkq",
-                        "cancel": "https://api.replicate.com/v1/trainings/ufawqhfynnddngldkgtslldrkq/cancel"
+                        "get": "https://api.replicate.com/v1/trainings/zz4ibbonubfz7carwiefibzgga",
+                        "cancel": "https://api.replicate.com/v1/trainings/zz4ibbonubfz7carwiefibzgga/cancel"
                       },
                       "created_at": "2022-04-26T22:13:06.224088Z",
                       "completed_at": "2022-04-26T22:13:06.580379Z",
@@ -494,8 +494,8 @@ class MockURLProtocol: URLProtocol {
                       "id": "zz4ibbonubfz7carwiefibzgga",
                       "version": "4a056052b8b98f6db8d011a450abbcd09a408ec9280c29f22d3538af1099646a",
                       "urls": {
-                        "get": "https://api.replicate.com/v1/trainings/ufawqhfynnddngldkgtslldrkq",
-                        "cancel": "https://api.replicate.com/v1/trainings/ufawqhfynnddngldkgtslldrkq/cancel"
+                        "get": "https://api.replicate.com/v1/trainings/zz4ibbonubfz7carwiefibzgga",
+                        "cancel": "https://api.replicate.com/v1/trainings/zz4ibbonubfz7carwiefibzgga/cancel"
                       },
                       "created_at": "2023-04-23T22:13:06.224088Z",
                       "completed_at": "2023-04-23T22:15:06.224088Z",
@@ -520,8 +520,8 @@ class MockURLProtocol: URLProtocol {
                       "id": "zz4ibbonubfz7carwiefibzgga",
                       "version": "4a056052b8b98f6db8d011a450abbcd09a408ec9280c29f22d3538af1099646a",
                       "urls": {
-                        "get": "https://api.replicate.com/v1/trainings/ufawqhfynnddngldkgtslldrkq",
-                        "cancel": "https://api.replicate.com/v1/trainings/ufawqhfynnddngldkgtslldrkq/cancel"
+                        "get": "https://api.replicate.com/v1/trainings/zz4ibbonubfz7carwiefibzgga",
+                        "cancel": "https://api.replicate.com/v1/trainings/zz4ibbonubfz7carwiefibzgga/cancel"
                       },
                       "created_at": "2023-04-23T22:13:06.224088Z",
                       "completed_at": "2023-04-23T22:15:06.224088Z",
