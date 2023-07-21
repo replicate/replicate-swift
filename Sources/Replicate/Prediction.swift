@@ -1,5 +1,6 @@
 import struct Foundation.Date
 import struct Foundation.TimeInterval
+import struct Foundation.URL
 import struct Dispatch.DispatchTime
 
 /// A prediction with unspecified inputs and outputs.
@@ -68,6 +69,9 @@ public struct Prediction<Input, Output>: Identifiable where Input: Codable, Outp
 
     /// When the prediction was completed.
     public let completedAt: Date?
+
+    /// A convenience object that can be used to construct new API requests against the given prediction.
+    public let urls: [String: URL]
 
     // MARK: -
 
@@ -167,6 +171,7 @@ extension Prediction: Codable {
         case metrics
         case createdAt = "created_at"
         case completedAt = "completed_at"
+        case urls
     }
 }
 
