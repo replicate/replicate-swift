@@ -401,7 +401,7 @@ public class Client {
             }
         case .post:
             if let params {
-                var encoder = JSONEncoder()
+                let encoder = JSONEncoder()
                 encoder.keyEncodingStrategy = .convertToSnakeCase
                 httpBody = try encoder.encode(params)
             }
