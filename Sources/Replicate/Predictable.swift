@@ -38,10 +38,12 @@ extension Predictable {
         webhook: Webhook? = nil,
         wait: Bool = false
     ) async throws -> Prediction {
-        return try await client.createPrediction(Prediction.self,
-                                                 version: Self.versionID,
-                                                 input: input,
-                                                 webhook: webhook,
-                                                 wait: wait)
+        var prediction =  try await client.createPrediction(Prediction.self,
+                                                            version: Self.versionID,
+                                                            input: input,
+                                                            webhook: webhook)
+        try await prediction.wait(with: client)
+
+        return prediction
     }
 }

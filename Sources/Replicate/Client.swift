@@ -72,11 +72,11 @@ public class Client {
         webhook: Webhook? = nil,
         _ type: Output.Type = Value.self
     ) async throws -> Output? {
-        let prediction = try await createPrediction(Prediction<Input, Output>.self,
+        var prediction = try await createPrediction(Prediction<Input, Output>.self,
                                                     version: identifier.version,
                                                     input: input,
-                                                    webhook: webhook,
-                                                    wait: true)
+                                                    webhook: webhook)
+        try await prediction.wait(with: self)
 
         if prediction.status == .failed {
             throw prediction.error ?? Error(detail: "Prediction failed")
