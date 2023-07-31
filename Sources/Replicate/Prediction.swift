@@ -67,6 +67,9 @@ public struct Prediction<Input, Output>: Identifiable where Input: Codable, Outp
     /// When the prediction was created.
     public let createdAt: Date
 
+    /// When the prediction was started
+    public let startedAt: Date?
+
     /// When the prediction was completed.
     public let completedAt: Date?
 
@@ -170,6 +173,7 @@ extension Prediction: Codable {
         case logs
         case metrics
         case createdAt = "created_at"
+        case startedAt = "started_at"
         case completedAt = "completed_at"
         case urls
     }

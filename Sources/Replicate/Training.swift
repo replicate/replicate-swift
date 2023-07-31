@@ -72,6 +72,9 @@ public struct Training<Input>: Identifiable where Input: Codable {
     /// When the training was created.
     public let createdAt: Date
 
+    /// When the training was started
+    public let startedAt: Date?
+
     /// When the training was completed.
     public let completedAt: Date?
 
@@ -103,6 +106,7 @@ extension Training: Codable {
         case logs
         case metrics
         case createdAt = "created_at"
+        case startedAt = "started_at"
         case completedAt = "completed_at"
         case urls
     }
