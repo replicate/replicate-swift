@@ -123,12 +123,13 @@ public class Client {
     ///         and this method returns the prediction object encoded
     ///         in the original creation response
     ///         (``Prediction/status`` is `.starting`).
+    @available(*, deprecated, message: "wait parameter is deprecated; use ``Prediction/wait(with:)`` or ``Client/run(_:input:webhook:_:)``")
     public func createPrediction<Input: Codable, Output: Codable>(
         _ type: Prediction<Input, Output>.Type = AnyPrediction.self,
         version id: Model.Version.ID,
         input: Input,
         webhook: Webhook? = nil,
-        wait: Bool = false
+        wait: Bool
     ) async throws -> Prediction<Input, Output> {
         var params: [String: Value] = [
             "version": "\(id)",
@@ -147,6 +148,63 @@ public class Client {
         } else {
             return prediction
         }
+    }
+
+    /// Create a prediction
+    ///
+    /// - Parameters:
+    ///    - id:
+    ///         The ID of the model version that you want to run.
+    ///
+    ///         You can get your model's versions using the API,
+    ///         or find them on the website by clicking
+    ///         the "Versions" tab on the Replicate model page,
+    ///         e.g. replicate.com/replicate/hello-world/versions,
+    ///         then copying the full SHA256 hash from the URL.
+    ///
+    ///         The version ID is the same as the Docker image ID
+    ///         that's created when you build your model.
+    ///    - input:
+    ///        The input depends on what model you are running.
+    ///
+    ///        To see the available inputs,
+    ///        click the "Run with API" tab on the model you are running.
+    ///        For example, stability-ai/stable-diffusion
+    ///        takes `prompt` as an input.
+    ///    - webhook:
+    ///         A webhook that is called when the prediction has completed.
+    ///
+    ///         It will be a `POST` request where
+    ///         the request body is the same as
+    ///         the response body of the get prediction endpoint.
+    ///         If there are network problems,
+    ///         we will retry the webhook a few times,
+    ///         so make sure it can be safely called more than once.
+    ///    - stream:
+    ///         Whether to stream the prediction output.
+    ///         By default, this is `false`.
+    public func createPrediction<Input: Codable, Output: Codable>(
+        _ type: Prediction<Input, Output>.Type = AnyPrediction.self,
+        version id: Model.Version.ID,
+        input: Input,
+        webhook: Webhook? = nil,
+        stream: Bool = false
+    ) async throws -> Prediction<Input, Output> {
+        var params: [String: Value] = [
+            "version": "\(id)",
+            "input": try Value(input)
+        ]
+
+        if let webhook {
+            params["webhook"] = "\(webhook.url.absoluteString)"
+            params["webhook_events_filter"] = .array(webhook.events.map { "\($0.rawValue)" })
+        }
+
+        if stream {
+            params["stream"] = true
+        }
+
+        return try await fetch(.post, "predictions", params: params)
     }
 
     @available(*, deprecated, renamed: "listPredictions(_:cursor:)")
