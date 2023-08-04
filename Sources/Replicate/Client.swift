@@ -482,14 +482,31 @@ public class Client {
             request.addValue(userAgent, forHTTPHeaderField: "User-Agent")
         }
 
+        var retrier = RetryPolicy.Retrier(policy: retryPolicy)
+
+        return try await self.fetch(request, retrier: &retrier)
+    }
+
+    private func fetch<T: Decodable>(_ request: URLRequest,
+                                     retrier: inout RetryPolicy.Retrier)
+    async throws -> T {
         let (data, response) = try await session.data(for: request)
 
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601WithFractionalSeconds
 
-        switch (response as? HTTPURLResponse)?.statusCode {
-        case (200..<300)?:
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw Error(detail: "invalid HTTP response: \(response)")
+        }
+
+        switch (request.httpMethod?.uppercased(), httpResponse.statusCode) {
+        case (_, 200..<300):
             return try decoder.decode(T.self, from: data)
+        case (_, 429), ("GET", 500..<600):
+            guard let delay = retrier.next() else { fallthrough }
+            try await Task.sleep(nanoseconds: UInt64(delay * 1e+9))
+
+            return try await self.fetch(request, retrier: &retrier)
         default:
             if let error = try? decoder.decode(Error.self, from: data) {
                 throw error
@@ -685,7 +702,7 @@ extension Client {
             ///   - deadline: A time after which no delay values are produced, if any.
             init(policy: RetryPolicy,
                  randomNumberGenerator: any RandomNumberGenerator = SystemRandomNumberGenerator(),
-                 deadline: DispatchTime?)
+                 deadline: DispatchTime? = nil)
             {
                 self.policy = policy
                 self.randomNumberGenerator = randomNumberGenerator
