@@ -42,7 +42,10 @@ extension Predictable {
                                                             version: Self.versionID,
                                                             input: input,
                                                             webhook: webhook)
-        try await prediction.wait(with: client)
+
+        if wait {
+            try await prediction.wait(with: client)
+        }
 
         return prediction
     }
