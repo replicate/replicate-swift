@@ -57,7 +57,8 @@ class MockURLProtocol: URLProtocol {
                       ]
                     }
                 """#
-            case ("POST", "https://api.replicate.com/v1/predictions"?):
+            case ("POST", "https://api.replicate.com/v1/predictions"?),
+                 ("POST", "https://api.replicate.com/v1/deployments/replicate/deployment/predictions"?):
                 statusCode = 201
                 
                 if let body = request.json,
