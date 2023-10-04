@@ -79,6 +79,13 @@ final class ClientTests: XCTestCase {
         XCTAssertEqual(predictions.results.count, 1)
     }
 
+    func testListModels() async throws {
+        let models = try await client.listModels()
+        XCTAssertEqual(models.results.count, 1)
+        XCTAssertEqual(models.results.first?.owner, "replicate")
+        XCTAssertEqual(models.results.first?.name, "hello-world")
+    }
+
     func testGetModel() async throws {
         let model = try await client.getModel("replicate/hello-world")
         XCTAssertEqual(model.owner, "replicate")
