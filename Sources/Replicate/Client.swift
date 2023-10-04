@@ -296,6 +296,15 @@ public class Client {
         return try await fetch(.post, "predictions/\(id)/cancel")
     }
 
+    /// List public models
+    /// - Parameters:
+    ///     - Parameter cursor: A pointer to a page of results to fetch.
+    public func listModels(cursor: Pagination.Cursor? = nil)
+        async throws -> Pagination.Page<Model>
+    {
+        return try await fetch(.get, "models")
+    }
+
     /// Get a model
     ///
     /// - Parameters:
@@ -308,7 +317,6 @@ public class Client {
     {
         return try await fetch(.get, "models/\(id)")
     }
-
 
     @available(*, deprecated, renamed: "listModelVersions(_:cursor:)")
     public func getModelVersions(_ id: Model.ID,
