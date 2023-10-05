@@ -655,6 +655,10 @@ extension Client {
         return Client(token: MockURLProtocol.validToken).mocked
     }
 
+    static var invalid: Client {
+        return Client(token: "<invalid>").mocked
+    }
+
     static var unauthenticated: Client {
         return Client(token: "").mocked
     }

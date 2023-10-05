@@ -527,7 +527,10 @@ public class Client {
 
         var request = URLRequest(url: url)
         request.httpMethod = method.rawValue
-        request.addValue("Token \(token)", forHTTPHeaderField: "Authorization")
+
+        if !token.isEmpty {
+            request.addValue("Token \(token)", forHTTPHeaderField: "Authorization")
+        }
         request.addValue("application/json", forHTTPHeaderField: "Accept")
 
         if let httpBody {
