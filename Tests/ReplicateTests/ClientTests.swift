@@ -159,6 +159,19 @@ final class ClientTests: XCTestCase {
         XCTAssertEqual(collection.slug, "super-resolution")
     }
 
+    func testInvalidToken() async throws {
+        do {
+            let _ = try await Client.invalid.listPredictions()
+            XCTFail("unauthenticated requests should fail")
+        } catch {
+            guard let error = error as? Replicate.Error else {
+                return XCTFail("invalid error")
+            }
+
+            XCTAssertEqual(error.detail, "Invalid token.")
+        }
+    }
+
     func testUnauthenticated() async throws {
         do {
             let _ = try await Client.unauthenticated.listPredictions()
@@ -168,7 +181,7 @@ final class ClientTests: XCTestCase {
                 return XCTFail("invalid error")
             }
 
-            XCTAssertEqual(error.detail, "Invalid token.")
+            XCTAssertEqual(error.detail, "Authentication credentials were not provided.")
         }
     }
 }
