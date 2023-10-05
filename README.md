@@ -8,7 +8,7 @@ To learn how to use it, [take a look at our guide to building a SwiftUI app with
 
 ## Requirements
 
-- macOS 12+ or iOS 15+
+- macOS 12+ or iOS 13+
 - Swift 5.7
 
 ## Usage
