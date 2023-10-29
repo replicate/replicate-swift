@@ -785,15 +785,22 @@ extension Client {
 
 private extension JSONDecoder.DateDecodingStrategy {
     static let iso8601WithFractionalSeconds = custom { decoder in
+        let container = try decoder.singleValueContainer()
+        let string = try container.decode(String.self)
+        
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [.withFullDate,
                                    .withFullTime,
                                    .withFractionalSeconds]
+        
+        if let date = formatter.date(from: string) {
+            return date
+        }
+        
+        // else, attempt to use the default formatter
+        let defaultFormatter = ISO8601DateFormatter()
 
-        let container = try decoder.singleValueContainer()
-        let string = try container.decode(String.self)
-
-        guard let date = formatter.date(from: string) else {
+        guard let date = defaultFormatter.date(from: string) else {
             throw DecodingError.dataCorruptedError(in: container, debugDescription: "Invalid date: \(string)")
         }
 
