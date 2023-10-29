@@ -789,18 +789,17 @@ private extension JSONDecoder.DateDecodingStrategy {
         let string = try container.decode(String.self)
         
         let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [.withFullDate,
-                                   .withFullTime,
+        formatter.formatOptions = [.withInternetDateTime,
                                    .withFractionalSeconds]
-        
+
         if let date = formatter.date(from: string) {
             return date
         }
         
-        // else, attempt to use the default formatter
-        let defaultFormatter = ISO8601DateFormatter()
+        // Try again without fractional seconds
+        formatter.formatOptions = [.withInternetDateTime]
 
-        guard let date = defaultFormatter.date(from: string) else {
+        guard let date = formatter.date(from: string) else {
             throw DecodingError.dataCorruptedError(in: container, debugDescription: "Invalid date: \(string)")
         }
 
