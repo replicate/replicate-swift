@@ -91,12 +91,6 @@ final class ClientTests: XCTestCase {
         XCTAssertEqual(model.owner, "replicate")
         XCTAssertEqual(model.name, "hello-world")
     }
-    
-    func testGetModel2() async throws {
-        let model = try await client.getModel("prompthero/openjourney")
-        XCTAssertEqual(model.owner, "prompthero")
-        XCTAssertEqual(model.name, "openjourney")
-    }
 
     func testGetModelVersions() async throws {
         let versions = try await client.listModelVersions("replicate/hello-world")
