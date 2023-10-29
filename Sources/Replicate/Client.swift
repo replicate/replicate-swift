@@ -783,7 +783,7 @@ extension Client {
 
 // MARK: -
 
-private extension JSONDecoder.DateDecodingStrategy {
+extension JSONDecoder.DateDecodingStrategy {
     static let iso8601WithFractionalSeconds = custom { decoder in
         let container = try decoder.singleValueContainer()
         let string = try container.decode(String.self)
