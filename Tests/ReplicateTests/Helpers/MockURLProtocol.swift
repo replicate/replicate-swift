@@ -158,6 +158,19 @@ class MockURLProtocol: URLProtocol {
                       "metrics": {}
                     }
                 """#
+            case ("GET", "https://api.replicate.com/v1/hardware"?):
+                statusCode = 200
+                json = #"""
+                    [
+                      { "name": "CPU", "sku": "cpu" },
+                      { "name": "Nvidia T4 GPU", "sku": "gpu-t4" },
+                      { "name": "Nvidia A40 GPU", "sku": "gpu-a40-small" },
+                      { "name": "Nvidia A40 (Large) GPU", "sku": "gpu-a40-large" },
+                      { "name": "Nvidia A40 (Large) GPU (8x)", "sku": "gpu-a40-large-8x" },
+                      { "name": "Nvidia A100 (40GB) GPU", "sku": "gpu-a100-small" },
+                      { "name": "Nvidia A100 (80GB) GPU", "sku": "gpu-a100-large" },
+                    ]
+                """#
             case ("GET", "https://api.replicate.com/v1/models"?):
                 statusCode = 200
                 json = #"""

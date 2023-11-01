@@ -153,6 +153,13 @@ final class ClientTests: XCTestCase {
         XCTAssertEqual(trainings.results.count, 1)
     }
 
+    func testListHardware() async throws {
+        let hardware = try await client.listHardware() 
+        XCTAssertGreaterThan(hardware.count, 1)
+        XCTAssertEqual(hardware.first?.name, "CPU")
+        XCTAssertEqual(hardware.first?.sku, "cpu")
+    }
+
     func testCustomBaseURL() async throws {
         let client = Client(baseURLString: "https://v1.replicate.proxy", token: MockURLProtocol.validToken).mocked
         let collection = try await client.getModelCollection("super-resolution")

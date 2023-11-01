@@ -479,6 +479,13 @@ public class Client {
         return try await fetch(.post, "trainings/\(id)/cancel")
     }
 
+    /// List hardware available for running a model on Replicate.
+    ///
+    /// - Returns: An array of hardware.
+    public func listHardware() async throws -> [Hardware] {
+        return try await fetch(.get, "hardware")
+    }
+
     // MARK: -
 
     private enum Method: String, Hashable {
