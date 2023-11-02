@@ -417,6 +417,7 @@ public class Client {
     ///         so make sure it can be safely called more than once.
     public func createTraining<Input: Codable>(
         _ type: Training<Input>.Type = AnyTraining.self,
+        model: Model.ID,
         version: Model.Version.ID,
         destination: Model.ID,
         input: Input,
@@ -424,7 +425,6 @@ public class Client {
     ) async throws -> Training<Input>
     {
         var params: [String: Value] = [
-            "version": "\(version)",
             "destination": "\(destination)",
             "input": try Value(input)
         ]
@@ -434,7 +434,7 @@ public class Client {
             params["webhook_events_filter"] = .array(webhook.events.map { "\($0.rawValue)" })
         }
 
-        return try await fetch(.post, "trainings", params: params)
+        return try await fetch(.post, "models/\(model)/versions/\(version)/trainings", params: params)
     }
 
     @available(*, deprecated, renamed: "listTrainings(_:cursor:)")
