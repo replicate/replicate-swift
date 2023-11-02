@@ -123,9 +123,10 @@ final class ClientTests: XCTestCase {
     }
 
     func testCreateTraining() async throws {
+        let base: Model.ID = "example/base"
         let version: Model.Version.ID = "4a056052b8b98f6db8d011a450abbcd09a408ec9280c29f22d3538af1099646a"
         let destination: Model.ID = "my/fork"
-        let training = try await client.createTraining(version: version, destination: destination, input: ["data": "..."])
+        let training = try await client.createTraining(model: base, version: version, destination: destination, input: ["data": "..."])
         XCTAssertEqual(training.id, "zz4ibbonubfz7carwiefibzgga")
         XCTAssertEqual(training.versionID, version)
         XCTAssertEqual(training.status, .starting)

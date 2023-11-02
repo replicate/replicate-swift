@@ -539,7 +539,7 @@ class MockURLProtocol: URLProtocol {
                       ]
                     }
                 """#
-            case ("POST", "https://api.replicate.com/v1/trainings"?):
+            case ("POST", "https://api.replicate.com/v1/models/example/base/versions/4a056052b8b98f6db8d011a450abbcd09a408ec9280c29f22d3538af1099646a/trainings"?):
                 statusCode = 201
 
                 json = #"""
