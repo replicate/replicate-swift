@@ -465,6 +465,23 @@ class MockURLProtocol: URLProtocol {
                       }
                     }
                 """#
+            case ("POST", "https://api.replicate.com/v1/models"?):
+                statusCode = 200
+                json = #"""
+                    {
+                      "url": "https://replicate.com/replicate/hello-world",
+                      "owner": "replicate",
+                      "name": "hello-world",
+                      "description": "A tiny model that says hello",
+                      "visibility": "public",
+                      "github_url": null,
+                      "paper_url": null,
+                      "license_url": null,
+                      "run_count": 0,
+                      "cover_image_url": null,
+                      "default_example": null
+                    }
+                """#
             case ("GET", "https://api.replicate.com/v1/models/replicate/hello-world/versions"?):
                 statusCode = 200
                 json = #"""
