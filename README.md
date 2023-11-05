@@ -1,15 +1,13 @@
 # Replicate Swift client
 
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Freplicate%2Freplicate-swift%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/replicate/replicate-swift)
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Freplicate%2Freplicate-swift%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/replicate/replicate-swift)
+
 This is a Swift client for [Replicate].
 It lets you run models from your Swift code,
 and do various other things on Replicate.
 
 To learn how to use it, [take a look at our guide to building a SwiftUI app with Replicate](https://replicate.com/docs/get-started/swiftui).
-
-## Requirements
-
-- macOS 12+ or iOS 15+
-- Swift 5.7
 
 ## Usage
 
