@@ -105,6 +105,12 @@ final class ClientTests: XCTestCase {
         XCTAssertEqual(version.id, "5c7d5dc6dd8bf75c1acaa8565735e7986bc5b66206b55cca93cb72c9bf15ccaa")
     }
 
+    func testCreateModel() async throws {
+        let model = try await client.createModel(owner: "replicate", name: "hello-world", visibility: .public, hardware: "cpu")
+        XCTAssertEqual(model.owner, "replicate")
+        XCTAssertEqual(model.name, "hello-world")
+    }
+
     func testListModelCollections() async throws {
         let collections = try await client.listModelCollections()
         XCTAssertEqual(collections.results.count, 1)
@@ -152,6 +158,13 @@ final class ClientTests: XCTestCase {
         XCTAssertNil(trainings.previous)
         XCTAssertEqual(trainings.next, "g5FWfcbO0EdVeR27rkXr0Z6tI0MjrW34ZejxnGzDeND3phpWWsyMGCQD")
         XCTAssertEqual(trainings.results.count, 1)
+    }
+
+    func testListHardware() async throws {
+        let hardware = try await client.listHardware() 
+        XCTAssertGreaterThan(hardware.count, 1)
+        XCTAssertEqual(hardware.first?.name, "CPU")
+        XCTAssertEqual(hardware.first?.sku, "cpu")
     }
 
     func testCustomBaseURL() async throws {

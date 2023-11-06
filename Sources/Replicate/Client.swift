@@ -45,6 +45,8 @@ public class Client {
         self.token = token
     }
 
+    // MARK: -
+
     /// Runs a model and waits for its output.
     ///
     /// - Parameters:
@@ -84,6 +86,8 @@ public class Client {
 
         return prediction.output
     }
+
+    // MARK: -
 
     /// Create a prediction
     ///
@@ -296,6 +300,8 @@ public class Client {
         return try await fetch(.post, "predictions/\(id)/cancel")
     }
 
+    // MARK: -
+
     /// List public models
     /// - Parameters:
     ///     - Parameter cursor: A pointer to a page of results to fetch.
@@ -317,6 +323,72 @@ public class Client {
     {
         return try await fetch(.get, "models/\(id)")
     }
+
+    /// Create a model
+    ///
+    /// - Parameters:
+    ///   - owner: The name of the user or organization that will own the model. This must be the same as the user or organization that is making the API request. In other words, the API token used in the request must belong to this user or organization.
+    ///   - name: The name of the model. This must be unique among all models owned by the user or organization.
+    ///   - visibility: Whether the model should be public or private. A public model can be viewed and run by anyone, whereas a private model can be viewed and run only by the user or organization members that own the model.
+    ///   - hardware: The SKU for the hardware used to run the model. Possible values can be found by calling ``listHardware()``.
+    ///   - description: A description of the model.
+    ///   - githubURL: A URL for the model's source code on GitHub.
+    ///   - paperURL: A URL for the model's paper.
+    ///   - licenseURL: A URL for the model's license.
+    ///   - coverImageURL: A URL for the model's cover image. This should be an image file.
+    public func createModel(
+        owner: String,
+        name: String,
+        visibility: Model.Visibility,
+        hardware: Hardware.ID,
+        description: String? = nil,
+        githubURL: URL? = nil,
+        paperURL: URL? = nil,
+        licenseURL: URL? = nil,
+        coverImageURL: URL? = nil
+    ) async throws -> Model
+    {
+        var params: [String: Value] = [
+            "owner": "\(owner)",
+            "name": "\(name)",
+            "visibility": "\(visibility.rawValue)",
+            "hardware": "\(hardware)"
+        ]
+
+        if let description {
+            params["description"] = "\(description)"
+        }
+
+        if let githubURL {
+            params["github_url"] = "\(githubURL)"
+        }
+
+        if let paperURL {
+            params["paper_url"] = "\(paperURL)"
+        }
+
+        if let licenseURL {
+            params["license_url"] = "\(licenseURL)"
+        }
+
+        if let coverImageURL {
+            params["cover_image_url"] = "\(coverImageURL)"
+        }
+
+        return try await fetch(.post, "models", params: params)
+    }
+
+    // MARK: -
+
+    /// List hardware available for running a model on Replicate.
+    ///
+    /// - Returns: An array of hardware.
+    public func listHardware() async throws -> [Hardware] {
+        return try await fetch(.get, "hardware")
+    }
+
+
+    // MARK: -
 
     @available(*, deprecated, renamed: "listModelVersions(_:cursor:)")
     public func getModelVersions(_ id: Model.ID,
@@ -356,6 +428,8 @@ public class Client {
         return try await fetch(.get, "models/\(id)/versions/\(version)")
     }
 
+    // MARK: -
+
     /// List collections of models
     /// - Parameters:
     ///     - Parameter cursor: A pointer to a page of results to fetch.
@@ -378,6 +452,8 @@ public class Client {
     {
         return try await fetch(.get, "collections/\(slug)")
     }
+
+    // MARK: -
 
     /// Train a model on Replicate.
     ///

@@ -23,6 +23,6 @@ final class DateDecodingTests: XCTestCase {
         let timestamp = "2023-10-29T01:23:45.678900Z"
         let json = #"{"date": "\#(timestamp)"}"#
         let value = try decoder.decode(Value.self, from: json.data(using: .utf8)!)
-        XCTAssertEqualWithAccuracy(value.date.timeIntervalSince1970, 1698542625.678, accuracy: 0.1)
+        XCTAssertEqual(value.date.timeIntervalSince1970, 1698542625.678, accuracy: 0.1)
     }
 }

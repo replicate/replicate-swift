@@ -158,6 +158,16 @@ class MockURLProtocol: URLProtocol {
                       "metrics": {}
                     }
                 """#
+            case ("GET", "https://api.replicate.com/v1/hardware"?):
+                statusCode = 200
+                json = #"""
+                    [
+                      { "name": "CPU", "sku": "cpu" },
+                      { "name": "Nvidia T4 GPU", "sku": "gpu-t4" },
+                      { "name": "Nvidia A40 GPU", "sku": "gpu-a40-small" },
+                      { "name": "Nvidia A40 (Large) GPU", "sku": "gpu-a40-large" }
+                    ]
+                """#
             case ("GET", "https://api.replicate.com/v1/models"?):
                 statusCode = 200
                 json = #"""
@@ -450,6 +460,23 @@ class MockURLProtocol: URLProtocol {
                           }
                         }
                       }
+                    }
+                """#
+            case ("POST", "https://api.replicate.com/v1/models"?):
+                statusCode = 200
+                json = #"""
+                    {
+                      "url": "https://replicate.com/replicate/hello-world",
+                      "owner": "replicate",
+                      "name": "hello-world",
+                      "description": "A tiny model that says hello",
+                      "visibility": "public",
+                      "github_url": null,
+                      "paper_url": null,
+                      "license_url": null,
+                      "run_count": 0,
+                      "cover_image_url": null,
+                      "default_example": null
                     }
                 """#
             case ("GET", "https://api.replicate.com/v1/models/replicate/hello-world/versions"?):
