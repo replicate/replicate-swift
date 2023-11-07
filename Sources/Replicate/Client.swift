@@ -308,7 +308,7 @@ public class Client {
     public func listModels(cursor: Pagination.Cursor? = nil)
         async throws -> Pagination.Page<Model>
     {
-        return try await fetch(.get, "models")
+        return try await fetch(.get, "models", cursor: cursor)
     }
 
     /// Get a model
