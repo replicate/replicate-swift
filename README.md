@@ -1,3 +1,6 @@
+> **Important**
+> [Help us make Replicate better by taking part in user research](https://forms.gle/qUVQ84mjiqzwzSb48)
+
 # Replicate Swift client
 
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Freplicate%2Freplicate-swift%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/replicate/replicate-swift)
