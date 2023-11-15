@@ -31,6 +31,9 @@ public struct Prediction<Input, Output>: Identifiable where Input: Codable, Outp
     /// - SeeAlso: ``Client/getPrediction(id:)``
     public let id: ID
 
+    /// The model used to create the prediction.
+    public let modelID: Model.ID
+
     /// The version of the model used to create the prediction.
     public let versionID: Model.Version.ID
 
@@ -164,6 +167,7 @@ public struct Prediction<Input, Output>: Identifiable where Input: Codable, Outp
 extension Prediction: Codable {
     private enum CodingKeys: String, CodingKey {
         case id
+        case modelID = "model"
         case versionID = "version"
         case source
         case input

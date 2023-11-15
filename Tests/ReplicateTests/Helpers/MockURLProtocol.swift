@@ -37,6 +37,7 @@ class MockURLProtocol: URLProtocol {
                       "results": [
                         {
                           "id": "ufawqhfynnddngldkgtslldrkq",
+                          "model": "replicate/hello-world",
                           "version": "5c7d5dc6dd8bf75c1acaa8565735e7986bc5b66206b55cca93cb72c9bf15ccaa",
                           "urls": {
                             "get": "https://api.replicate.com/v1/predictions/ufawqhfynnddngldkgtslldrkq",
@@ -71,6 +72,7 @@ class MockURLProtocol: URLProtocol {
                     json = #"""
                         {
                           "id": "ufawqhfynnddngldkgtslldrkq",
+                          "model": "replicate/hello-world",
                           "version": "5c7d5dc6dd8bf75c1acaa8565735e7986bc5b66206b55cca93cb72c9bf15ccaa",
                           "urls": {
                             "get": "https://api.replicate.com/v1/predictions/ufawqhfynnddngldkgtslldrkq",
@@ -95,6 +97,7 @@ class MockURLProtocol: URLProtocol {
                 json = #"""
                     {
                       "id": "ufawqhfynnddngldkgtslldrkq",
+                      "model": "replicate/hello-world",
                       "version": "5c7d5dc6dd8bf75c1acaa8565735e7986bc5b66206b55cca93cb72c9bf15ccaa",
                       "urls": {
                         "get": "https://api.replicate.com/v1/predictions/ufawqhfynnddngldkgtslldrkq",
@@ -120,6 +123,7 @@ class MockURLProtocol: URLProtocol {
                 json = #"""
                     {
                       "id": "ufawqhfynnddngldkgtslldrkq",
+                      "model": "replicate/hello-world",
                       "version": "5c7d5dc6dd8bf75c1acaa8565735e7986bc5b66206b55cca93cb72c9bf15ccaa",
                       "urls": {
                         "get": "https://api.replicate.com/v1/predictions/ufawqhfynnddngldkgtslldrkq",
@@ -185,6 +189,7 @@ class MockURLProtocol: URLProtocol {
                           "get": "https://api.replicate.com/v1/predictions/3s2vyrb3pfblrnyp2smdsxxjvu",
                           "cancel": "https://api.replicate.com/v1/predictions/3s2vyrb3pfblrnyp2smdsxxjvu/cancel"
                         },
+                        "model": "replicate/hello-world",
                         "version": "5c7d5dc6dd8bf75c1acaa8565735e7986bc5b66206b55cca93cb72c9bf15ccaa",
                         "webhook_completed": null
                       },
@@ -256,6 +261,7 @@ class MockURLProtocol: URLProtocol {
                           "get": "https://api.replicate.com/v1/predictions/3s2vyrb3pfblrnyp2smdsxxjvu",
                           "cancel": "https://api.replicate.com/v1/predictions/3s2vyrb3pfblrnyp2smdsxxjvu/cancel"
                         },
+                        "model": "replicate/hello-world",
                         "version": "5c7d5dc6dd8bf75c1acaa8565735e7986bc5b66206b55cca93cb72c9bf15ccaa",
                         "webhook_completed": null
                       },
@@ -526,6 +532,7 @@ class MockURLProtocol: URLProtocol {
                       "results": [
                         {
                           "id": "zz4ibbonubfz7carwiefibzgga",
+                          "model": "replicate/hello-world",
                           "version": "4a056052b8b98f6db8d011a450abbcd09a408ec9280c29f22d3538af1099646a",
                           "urls": {
                             "get": "https://api.replicate.com/v1/trainings/zz4ibbonubfz7carwiefibzgga",
@@ -575,6 +582,7 @@ class MockURLProtocol: URLProtocol {
                 json = #"""
                     {
                       "id": "zz4ibbonubfz7carwiefibzgga",
+                      "model": "replicate/hello-world",
                       "version": "4a056052b8b98f6db8d011a450abbcd09a408ec9280c29f22d3538af1099646a",
                       "urls": {
                         "get": "https://api.replicate.com/v1/trainings/zz4ibbonubfz7carwiefibzgga",
@@ -601,6 +609,7 @@ class MockURLProtocol: URLProtocol {
                 json = #"""
                     {
                       "id": "zz4ibbonubfz7carwiefibzgga",
+                      "model": "replicate/hello-world",
                       "version": "4a056052b8b98f6db8d011a450abbcd09a408ec9280c29f22d3538af1099646a",
                       "urls": {
                         "get": "https://api.replicate.com/v1/trainings/zz4ibbonubfz7carwiefibzgga",
