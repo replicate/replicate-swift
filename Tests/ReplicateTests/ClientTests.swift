@@ -43,9 +43,12 @@ final class ClientTests: XCTestCase {
 
     func testCreatePredictionWithInvalidVersion() async throws {
         let version: Model.Version.ID = "invalid"
-        let prediction = try await client.createPrediction(version: version, input: ["text": "Alice"])
-        XCTAssertEqual(prediction.status, .failed)
-        XCTAssertEqual(prediction.error?.localizedDescription, "Invalid version")
+        do {
+            _ = try await client.createPrediction(version: version, input: ["text": "Alice"])
+            XCTFail()
+        } catch {
+            XCTAssertEqual(error.localizedDescription, "Invalid version")
+        }
     }
 
     func testCreatePredictionAndWait() async throws {

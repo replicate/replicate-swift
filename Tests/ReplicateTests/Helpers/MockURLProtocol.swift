@@ -37,6 +37,7 @@ class MockURLProtocol: URLProtocol {
                       "results": [
                         {
                           "id": "ufawqhfynnddngldkgtslldrkq",
+                          "model": "replicate/hello-world",
                           "version": "5c7d5dc6dd8bf75c1acaa8565735e7986bc5b66206b55cca93cb72c9bf15ccaa",
                           "urls": {
                             "get": "https://api.replicate.com/v1/predictions/ufawqhfynnddngldkgtslldrkq",
@@ -59,38 +60,19 @@ class MockURLProtocol: URLProtocol {
                 """#
             case ("POST", "https://api.replicate.com/v1/predictions"?),
                  ("POST", "https://api.replicate.com/v1/deployments/replicate/deployment/predictions"?):
-                statusCode = 201
-                
+
                 if let body = request.json,
                    body["version"] as? String == "invalid"
                 {
-                    json = #"""
-                        {
-                          "id": "ufawqhfynnddngldkgtslldrkq",
-                          "version": "invalid",
-                          "urls": {
-                            "get": "https://api.replicate.com/v1/predictions/ufawqhfynnddngldkgtslldrkq",
-                            "cancel": "https://api.replicate.com/v1/predictions/ufawqhfynnddngldkgtslldrkq/cancel"
-                          },
-                          "created_at": "2022-04-26T22:13:06.224088Z",
-                          "completed_at": "2022-04-26T22:13:06.580379Z",
-                          "source": "web",
-                          "status": "failed",
-                          "input": {
-                            "text": "Alice"
-                          },
-                          "output": null,
-                          "error": {
-                            "detail": "Invalid version"
-                          },
-                          "logs": null,
-                          "metrics": {}
-                        }
-                    """#
+                    statusCode = 400
+                    json = #"{ "detail" : "Invalid version" }"#
                 } else {
+                    statusCode = 201
+
                     json = #"""
                         {
                           "id": "ufawqhfynnddngldkgtslldrkq",
+                          "model": "replicate/hello-world",
                           "version": "5c7d5dc6dd8bf75c1acaa8565735e7986bc5b66206b55cca93cb72c9bf15ccaa",
                           "urls": {
                             "get": "https://api.replicate.com/v1/predictions/ufawqhfynnddngldkgtslldrkq",
@@ -115,6 +97,7 @@ class MockURLProtocol: URLProtocol {
                 json = #"""
                     {
                       "id": "ufawqhfynnddngldkgtslldrkq",
+                      "model": "replicate/hello-world",
                       "version": "5c7d5dc6dd8bf75c1acaa8565735e7986bc5b66206b55cca93cb72c9bf15ccaa",
                       "urls": {
                         "get": "https://api.replicate.com/v1/predictions/ufawqhfynnddngldkgtslldrkq",
@@ -140,6 +123,7 @@ class MockURLProtocol: URLProtocol {
                 json = #"""
                     {
                       "id": "ufawqhfynnddngldkgtslldrkq",
+                      "model": "replicate/hello-world",
                       "version": "5c7d5dc6dd8bf75c1acaa8565735e7986bc5b66206b55cca93cb72c9bf15ccaa",
                       "urls": {
                         "get": "https://api.replicate.com/v1/predictions/ufawqhfynnddngldkgtslldrkq",
@@ -205,6 +189,7 @@ class MockURLProtocol: URLProtocol {
                           "get": "https://api.replicate.com/v1/predictions/3s2vyrb3pfblrnyp2smdsxxjvu",
                           "cancel": "https://api.replicate.com/v1/predictions/3s2vyrb3pfblrnyp2smdsxxjvu/cancel"
                         },
+                        "model": "replicate/hello-world",
                         "version": "5c7d5dc6dd8bf75c1acaa8565735e7986bc5b66206b55cca93cb72c9bf15ccaa",
                         "webhook_completed": null
                       },
@@ -276,6 +261,7 @@ class MockURLProtocol: URLProtocol {
                           "get": "https://api.replicate.com/v1/predictions/3s2vyrb3pfblrnyp2smdsxxjvu",
                           "cancel": "https://api.replicate.com/v1/predictions/3s2vyrb3pfblrnyp2smdsxxjvu/cancel"
                         },
+                        "model": "replicate/hello-world",
                         "version": "5c7d5dc6dd8bf75c1acaa8565735e7986bc5b66206b55cca93cb72c9bf15ccaa",
                         "webhook_completed": null
                       },
@@ -546,6 +532,7 @@ class MockURLProtocol: URLProtocol {
                       "results": [
                         {
                           "id": "zz4ibbonubfz7carwiefibzgga",
+                          "model": "replicate/hello-world",
                           "version": "4a056052b8b98f6db8d011a450abbcd09a408ec9280c29f22d3538af1099646a",
                           "urls": {
                             "get": "https://api.replicate.com/v1/trainings/zz4ibbonubfz7carwiefibzgga",
@@ -595,6 +582,7 @@ class MockURLProtocol: URLProtocol {
                 json = #"""
                     {
                       "id": "zz4ibbonubfz7carwiefibzgga",
+                      "model": "replicate/hello-world",
                       "version": "4a056052b8b98f6db8d011a450abbcd09a408ec9280c29f22d3538af1099646a",
                       "urls": {
                         "get": "https://api.replicate.com/v1/trainings/zz4ibbonubfz7carwiefibzgga",
@@ -621,6 +609,7 @@ class MockURLProtocol: URLProtocol {
                 json = #"""
                     {
                       "id": "zz4ibbonubfz7carwiefibzgga",
+                      "model": "replicate/hello-world",
                       "version": "4a056052b8b98f6db8d011a450abbcd09a408ec9280c29f22d3538af1099646a",
                       "urls": {
                         "get": "https://api.replicate.com/v1/trainings/zz4ibbonubfz7carwiefibzgga",
