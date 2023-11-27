@@ -154,10 +154,10 @@ public class Client {
         }
     }
 
-    /// Create a prediction
+    /// Create a prediction from a model version
     ///
     /// - Parameters:
-    ///    - id:
+    ///    - version:
     ///         The ID of the model version that you want to run.
     ///
     ///         You can get your model's versions using the API,
@@ -209,6 +209,53 @@ public class Client {
         }
 
         return try await fetch(.post, "predictions", params: params)
+    }
+
+    /// Create a prediction from a model
+    ///
+    /// - Parameters:
+    ///    - model:
+    ///         The ID of the model that you want to run.
+    ///    - input:
+    ///        The input depends on what model you are running.
+    ///
+    ///        To see the available inputs,
+    ///        click the "Run with API" tab on the model you are running.
+    ///        For example, stability-ai/stable-diffusion
+    ///        takes `prompt` as an input.
+    ///    - webhook:
+    ///         A webhook that is called when the prediction has completed.
+    ///
+    ///         It will be a `POST` request where
+    ///         the request body is the same as
+    ///         the response body of the get prediction endpoint.
+    ///         If there are network problems,
+    ///         we will retry the webhook a few times,
+    ///         so make sure it can be safely called more than once.
+    ///    - stream:
+    ///         Whether to stream the prediction output.
+    ///         By default, this is `false`.
+    public func createPrediction<Input: Codable, Output: Codable>(
+        _ type: Prediction<Input, Output>.Type = AnyPrediction.self,
+        model id: Model.ID,
+        input: Input,
+        webhook: Webhook? = nil,
+        stream: Bool = false
+    ) async throws -> Prediction<Input, Output> {
+        var params: [String: Value] = [
+            "input": try Value(input)
+        ]
+
+        if let webhook {
+            params["webhook"] = "\(webhook.url.absoluteString)"
+            params["webhook_events_filter"] = .array(webhook.events.map { "\($0.rawValue)" })
+        }
+
+        if stream {
+            params["stream"] = true
+        }
+
+        return try await fetch(.post, "models/\(id)/predictions", params: params)
     }
 
     /// Create a prediction using a deployment
