@@ -24,11 +24,19 @@ final class ClientTests: XCTestCase {
         }
     }
 
-    func testCreatePrediction() async throws {
+    func testCreatePredictionWithVersion() async throws {
         let version: Model.Version.ID = "5c7d5dc6dd8bf75c1acaa8565735e7986bc5b66206b55cca93cb72c9bf15ccaa"
         let prediction = try await client.createPrediction(version: version, input: ["text": "Alice"])
         XCTAssertEqual(prediction.id, "ufawqhfynnddngldkgtslldrkq")
         XCTAssertEqual(prediction.versionID, version)
+        XCTAssertEqual(prediction.status, .starting)
+    }
+
+    func testCreatePredictionWithModel() async throws {
+        let model: Model.ID = "meta/llama-2-70b-chat"
+        let prediction = try await client.createPrediction(model: model, input: ["prompt": "Please write a poem about camelids"])
+        XCTAssertEqual(prediction.id, "heat2o3bzn3ahtr6bjfftvbaci")
+        XCTAssertEqual(prediction.modelID, model)
         XCTAssertEqual(prediction.status, .starting)
     }
 

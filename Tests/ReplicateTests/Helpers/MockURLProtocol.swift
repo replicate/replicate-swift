@@ -92,6 +92,26 @@ class MockURLProtocol: URLProtocol {
                         }
                     """#
                 }
+            case ("POST", "https://api.replicate.com/v1/models/meta/llama-2-70b-chat/predictions"?):
+                statusCode = 201
+                json = #"""
+                    {
+                      "id": "heat2o3bzn3ahtr6bjfftvbaci",
+                      "model": "meta/llama-2-70b-chat",
+                      "version": "02e509c789964a7ea8736978a43525956ef40397be9033abf9fd2badfe68c9e3",
+                      "input": {
+                            "prompt": "Please write a haiku about llamas."
+                      },
+                      "logs": "",
+                      "error": null,
+                      "status": "starting",
+                      "created_at": "2023-11-27T13:35:45.99397566Z",
+                      "urls": {
+                            "cancel": "https://api.replicate.com/v1/predictions/heat2o3bzn3ahtr6bjfftvbaci/cancel",
+                            "get": "https://api.replicate.com/v1/predictions/heat2o3bzn3ahtr6bjfftvbaci"
+                      }
+                    }
+                """#
             case ("GET", "https://api.replicate.com/v1/predictions/ufawqhfynnddngldkgtslldrkq"?):
                 statusCode = 200
                 json = #"""
