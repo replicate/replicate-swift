@@ -8,10 +8,16 @@ final class ClientTests: XCTestCase {
         URLProtocol.registerClass(MockURLProtocol.self)
     }
 
-    func testRun() async throws {
+    func testRunWithVersion() async throws {
         let identifier: Identifier = "test/example:5c7d5dc6dd8bf75c1acaa8565735e7986bc5b66206b55cca93cb72c9bf15ccaa"
         let output = try await client.run(identifier, input: ["text": "Alice"])
         XCTAssertEqual(output, ["Hello, Alice!"])
+    }
+
+    func testRunWithModel() async throws {
+        let identifier: Identifier = "meta/llama-2-70b-chat"
+        let output = try await client.run(identifier, input: ["prompt": "Please write a haiku about llamas."])
+        XCTAssertEqual(output, ["I'm sorry, I'm afraid I can't do that"] )
     }
 
     func testRunWithInvalidVersion() async throws {

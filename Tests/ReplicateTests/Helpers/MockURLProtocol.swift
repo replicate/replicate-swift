@@ -138,6 +138,32 @@ class MockURLProtocol: URLProtocol {
                       }
                     }
                 """#
+            case ("GET", "https://api.replicate.com/v1/predictions/heat2o3bzn3ahtr6bjfftvbaci"?):
+                statusCode = 200
+                json = #"""
+                    {
+                      "id": "heat2o3bzn3ahtr6bjfftvbaci",
+                      "model": "meta/llama-2-70b-chat",
+                      "version": "5c7d5dc6dd8bf75c1acaa8565735e7986bc5b66206b55cca93cb72c9bf15ccaa",
+                      "urls": {
+                        "get": "https://api.replicate.com/v1/predictions/heat2o3bzn3ahtr6bjfftvbaci",
+                        "cancel": "https://api.replicate.com/v1/predictions/heat2o3bzn3ahtr6bjfftvbaci/cancel"
+                      },
+                      "created_at": "2022-04-26T22:13:06.224088Z",
+                      "completed_at": "2022-04-26T22:15:06.224088Z",
+                      "source": "web",
+                      "status": "succeeded",
+                      "input": {
+                          "prompt": "Please write a haiku about llamas."
+                      },
+                      "output": ["I'm sorry, I'm afraid I can't do that"],
+                      "error": null,
+                      "logs": "",
+                      "metrics": {
+                        "predict_time": 1.0
+                      }
+                    }
+                """#
             case ("POST", "https://api.replicate.com/v1/predictions/ufawqhfynnddngldkgtslldrkq/cancel"?):
                 statusCode = 200
                 json = #"""
