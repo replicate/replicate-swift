@@ -74,10 +74,19 @@ public class Client {
         webhook: Webhook? = nil,
         _ type: Output.Type = Value.self
     ) async throws -> Output? {
-        var prediction = try await createPrediction(Prediction<Input, Output>.self,
-                                                    version: identifier.version,
+        var prediction: Prediction<Input, Output>
+        if let version = identifier.version {
+            prediction = try await createPrediction(Prediction<Input, Output>.self,
+                                                    version: version,
                                                     input: input,
                                                     webhook: webhook)
+        } else {
+            prediction = try await createPrediction(Prediction<Input, Output>.self,
+                                                    model: "\(identifier.owner)/\(identifier.name)",
+                                                    input: input,
+                                                    webhook: webhook)
+        }
+
         try await prediction.wait(with: self)
 
         if prediction.status == .failed {
