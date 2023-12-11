@@ -7,7 +7,7 @@ public struct Identifier: Hashable {
     public let name: String
 
     /// The version.
-    let version: Model.Version.ID
+    let version: Model.Version.ID?
 }
 
 // MARK: - Equatable & Comparable
@@ -31,19 +31,26 @@ extension Identifier: RawRepresentable {
         let components = rawValue.split(separator: "/")
         guard components.count == 2 else { return nil }
 
-        let owner = String(components[0])
+        if components[1].contains(":") {
+            let nameAndVersion = components[1].split(separator: ":")
+            guard nameAndVersion.count == 2 else { return nil }
 
-        let nameAndVersion = components[1].split(separator: ":")
-        guard nameAndVersion.count == 2 else { return nil }
-
-        let name = String(nameAndVersion[0])
-        let version = Model.Version.ID(nameAndVersion[1])
-
-        self.init(owner: owner, name: name, version: version)
+            self.init(owner: String(components[0]),
+                      name: String(nameAndVersion[0]),
+                      version: Model.Version.ID(nameAndVersion[1]))
+        } else {
+            self.init(owner: String(components[0]),
+                      name: String(components[1]),
+                      version: nil)
+        }
     }
 
     public var rawValue: String {
-        return "\(owner)/\(name):\(version)"
+        if let version = version {
+            return "\(owner)/\(name):\(version)"
+        } else {
+            return "\(owner)/\(name)"
+        }
     }
 }
 
