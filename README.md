@@ -21,8 +21,7 @@ import Replicate
 let replicate = Replicate.Client(token: <#token#>)
 ```
 
-> **Warning**
->
+> [!WARNING]
 > Don't store secrets in code or any other resources bundled with your app.
 > Instead, fetch them from CloudKit or another server and store them in the keychain.
 
@@ -43,9 +42,7 @@ Or fetch a model by name and create a prediction against its latest version:
 ```swift
 let model = try await replicate.getModel("stability-ai/stable-diffusion")
 if let latestVersion = model.latestVersion {
-    let prompt = """
-        a 19th century portrait of a wombat gentleman
-    """
+    let prompt = "a 19th century portrait of a wombat gentleman"
     let prediction = try await replicate.createPrediction(version: latestVersion.id,
                                                        input: ["prompt": "\(prompt)"],
                                                        wait: true)
@@ -78,9 +75,7 @@ You can start a model and run it in the background:
 ```swift
 let model = replicate.getModel("kvfrans/clipdraw")
 
-let prompt = """
-    Watercolor painting of an underwater submarine
-"""
+let prompt = "watercolor painting of an underwater submarine"
 var prediction = replicate.createPrediction(version: model.latestVersion!.id,
                                          input: ["prompt": "\(prompt)"])
 print(prediction.status)
@@ -96,9 +91,7 @@ You can cancel a running prediction:
 ```swift
 let model = replicate.getModel("kvfrans/clipdraw")
 
-let prompt = """
-    Watercolor painting of an underwater submarine
-"""
+let prompt = "watercolor painting of an underwater submarine"
 var prediction = replicate.createPrediction(version: model.latestVersion!.id,
                                             input: ["prompt": "\(prompt)"])
 print(prediction.status)
