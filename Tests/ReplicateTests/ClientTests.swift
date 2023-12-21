@@ -184,6 +184,13 @@ final class ClientTests: XCTestCase {
         XCTAssertEqual(hardware.first?.sku, "cpu")
     }
 
+    func testCurrentAccount() async throws {
+        let account = try await client.getCurrentAccount()
+        XCTAssertEqual(account.type, .organization)
+        XCTAssertEqual(account.username, "replicate")
+        XCTAssertEqual(account.name, "Replicate")
+    }
+
     func testCustomBaseURL() async throws {
         let client = Client(baseURLString: "https://v1.replicate.proxy", token: MockURLProtocol.validToken).mocked
         let collection = try await client.getModelCollection("super-resolution")
