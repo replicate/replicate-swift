@@ -684,6 +684,33 @@ class MockURLProtocol: URLProtocol {
                       "metrics": {}
                     }
                 """#
+            case ("GET", "https://api.replicate.com/v1/deployments/replicate/my-app-image-generator"?):
+                statusCode = 200
+                json = #"""
+                {
+                  "owner": "replicate",
+                  "name": "my-app-image-generator",
+                  "current_release": {
+                    "number": 1,
+                    "model": "stability-ai/sdxl",
+                    "version": "da77bc59ee60423279fd632efb4795ab731d9e3ca9705ef3341091fb989b7eaf",
+                    "created_at": "2024-02-15T16:32:57.018467Z",
+                    "created_by": {
+                      "type": "organization",
+                      "username": "replicate",
+                      "name": "Replicate, Inc.",
+                      "github_url": "https://github.com/replicate",
+                    },
+                    "configuration": {
+                      "hardware": "gpu-t4",
+                      "scaling": {
+                        "min_instances": 1,
+                        "max_instances": 5
+                      }
+                    }
+                  }
+                }
+                """#
             default:
                 client?.urlProtocol(self, didFailWithError: URLError(.badURL))
                 return

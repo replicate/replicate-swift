@@ -620,6 +620,21 @@ public class Client {
 
     // MARK: -
 
+    /// Get a deployment
+    ///
+    /// - Parameters:
+    ///    - id: The deployment identifier, comprising
+    ///          the name of the user or organization that owns the deployment and
+    ///          the name of the deployment.
+    ///          For example, "replicate/my-app-image-generator".
+    public func getDeployment(_ id: Deployment.ID)
+        async throws -> Deployment
+    {
+        return try await fetch(.get, "deployments/\(id)")
+    }
+
+    // MARK: -
+
     private enum Method: String, Hashable {
         case get = "GET"
         case post = "POST"
