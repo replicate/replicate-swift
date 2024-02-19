@@ -1,7 +1,7 @@
 import struct Foundation.URL
 
 /// A Replicate account.
-public struct Account: Hashable, Codable {
+public struct Account: Hashable {
     /// The acount type.
     public enum AccountType: String, CaseIterable, Hashable, Codable {
         /// A user.
@@ -39,6 +39,17 @@ extension Account: Identifiable {
 extension Account: CustomStringConvertible {
     public var description: String {
         return self.username
+    }
+}
+
+// MARK: - Codable
+
+extension Account: Codable {
+    public enum CodingKeys: String, CodingKey {
+        case type
+        case username
+        case name
+        case githubURL = "github_url"
     }
 }
 
