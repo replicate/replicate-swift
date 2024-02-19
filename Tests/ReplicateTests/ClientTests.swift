@@ -82,6 +82,8 @@ final class ClientTests: XCTestCase {
         XCTAssertEqual(prediction.status, .succeeded)
         XCTAssertEqual(prediction.createdAt.timeIntervalSinceReferenceDate, 672703986.224, accuracy: 1)
         XCTAssertEqual(prediction.urls["cancel"]?.absoluteString, "https://api.replicate.com/v1/predictions/ufawqhfynnddngldkgtslldrkq/cancel")
+        XCTAssertEqual(prediction.progress?.completedUnitCount, 5)
+        XCTAssertEqual(prediction.progress?.totalUnitCount, 5)
     }
 
     func testCancelPrediction() async throws {
