@@ -189,6 +189,24 @@ final class ClientTests: XCTestCase {
         XCTAssertEqual(account.type, .organization)
         XCTAssertEqual(account.username, "replicate")
         XCTAssertEqual(account.name, "Replicate")
+        XCTAssertEqual(account.githubURL?.absoluteString, "https://github.com/replicate")
+    }
+
+    func testGetDeployment() async throws {
+        let deployment = try await client.getDeployment("replicate/my-app-image-generator")
+        XCTAssertEqual(deployment.owner, "replicate")
+        XCTAssertEqual(deployment.name, "my-app-image-generator")
+        XCTAssertEqual(deployment.currentRelease?.number, 1)
+        XCTAssertEqual(deployment.currentRelease?.model, "stability-ai/sdxl")
+        XCTAssertEqual(deployment.currentRelease?.version, "da77bc59ee60423279fd632efb4795ab731d9e3ca9705ef3341091fb989b7eaf")
+        XCTAssertEqual(deployment.currentRelease!.createdAt.timeIntervalSinceReferenceDate, 729707577.01, accuracy: 1)
+        XCTAssertEqual(deployment.currentRelease?.createdBy.type, .organization)
+        XCTAssertEqual(deployment.currentRelease?.createdBy.username, "replicate")
+        XCTAssertEqual(deployment.currentRelease?.createdBy.name, "Replicate, Inc.")
+        XCTAssertEqual(deployment.currentRelease?.createdBy.githubURL?.absoluteString, "https://github.com/replicate")
+        XCTAssertEqual(deployment.currentRelease?.configuration.hardware, "gpu-t4")
+        XCTAssertEqual(deployment.currentRelease?.configuration.scaling.minInstances, 1)
+        XCTAssertEqual(deployment.currentRelease?.configuration.scaling.maxInstances, 5)
     }
 
     func testCustomBaseURL() async throws {
