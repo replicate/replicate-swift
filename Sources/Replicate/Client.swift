@@ -612,6 +612,13 @@ public class Client {
     }
 
     // MARK: -
+    
+    /// Get the current account
+    public func getCurrentAccount() async throws -> Account {
+        return try await fetch(.get, "account")
+    }
+
+    // MARK: -
 
     private enum Method: String, Hashable {
         case get = "GET"
