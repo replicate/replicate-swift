@@ -683,7 +683,7 @@ public class Client {
         request.httpMethod = method.rawValue
 
         if !token.isEmpty {
-            request.addValue("Token \(token)", forHTTPHeaderField: "Authorization")
+            request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
         request.addValue("application/json", forHTTPHeaderField: "Accept")
 
