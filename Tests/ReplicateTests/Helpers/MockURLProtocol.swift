@@ -26,7 +26,7 @@ class MockURLProtocol: URLProtocol {
         let json: String
 
         switch request.value(forHTTPHeaderField: "Authorization") {
-        case "Token \(Self.validToken)":
+        case "Bearer \(Self.validToken)":
             switch (request.httpMethod, request.url?.absoluteString) {
             case ("GET", "https://api.replicate.com/v1/account"?):
                 statusCode = 200
