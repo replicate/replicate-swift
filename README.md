@@ -56,7 +56,8 @@ like [tencentarc/gfpgan](https://replicate.com/tencentarc/gfpgan),
 receive images as inputs.
 To pass a file as an input,
 read the contents of the file into a `Data` object,
-and use the `uriEncoded(mimeType:) helper method to create a URI-encoded string.
+and use the `uriEncoded(mimeType:)` helper method to create a URI-encoded string.
+If you don't use the built-in file handler but want to pass a file handle directly, you'll need to create a base64 encoded data URL of the file input.
 
 ```swift
 let model = try await replicate.getModel("tencentarc/gfpgan")
