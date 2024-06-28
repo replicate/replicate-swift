@@ -54,9 +54,10 @@ if let latestVersion = model.latestVersion {
 Some models,
 like [tencentarc/gfpgan](https://replicate.com/tencentarc/gfpgan),
 receive images as inputs.
-To pass a file as an input,
-read the contents of the file into a `Data` object,
-and use the `uriEncoded(mimeType:) helper method to create a URI-encoded string.
+To run a model that takes a file input you can pass either
+a URL to a publicly accessible file on the Internet
+or use the `uriEncoded(mimeType:) helper method to create 
+a base64-encoded data URL from the contents of a local file.
 
 ```swift
 let model = try await replicate.getModel("tencentarc/gfpgan")
