@@ -194,8 +194,8 @@ public class Client {
     ///         we will retry the webhook a few times,
     ///         so make sure it can be safely called more than once.
     ///    - stream:
-    ///         Whether to stream the prediction output.
-    ///         By default, this is `false`.
+    ///         The stream parameter has no effect, as streaming is now enabled by default for all predictions.
+    ///         For more information, see https://replicate.com/changelog/2024-07-15-streams-always-available-stream-parameter-deprecated
     public func createPrediction<Input: Codable, Output: Codable>(
         _ type: Prediction<Input, Output>.Type = AnyPrediction.self,
         version id: Model.Version.ID,
@@ -211,10 +211,6 @@ public class Client {
         if let webhook {
             params["webhook"] = "\(webhook.url.absoluteString)"
             params["webhook_events_filter"] = .array(webhook.events.map { "\($0.rawValue)" })
-        }
-
-        if stream {
-            params["stream"] = true
         }
 
         return try await fetch(.post, "predictions", params: params)
@@ -242,8 +238,8 @@ public class Client {
     ///         we will retry the webhook a few times,
     ///         so make sure it can be safely called more than once.
     ///    - stream:
-    ///         Whether to stream the prediction output.
-    ///         By default, this is `false`.
+    ///         The stream parameter has no effect, as streaming is now enabled by default for all predictions.
+    ///         For more information, see https://replicate.com/changelog/2024-07-15-streams-always-available-stream-parameter-deprecated
     public func createPrediction<Input: Codable, Output: Codable>(
         _ type: Prediction<Input, Output>.Type = AnyPrediction.self,
         model id: Model.ID,
@@ -258,10 +254,6 @@ public class Client {
         if let webhook {
             params["webhook"] = "\(webhook.url.absoluteString)"
             params["webhook_events_filter"] = .array(webhook.events.map { "\($0.rawValue)" })
-        }
-
-        if stream {
-            params["stream"] = true
         }
 
         return try await fetch(.post, "models/\(id)/predictions", params: params)
@@ -291,8 +283,8 @@ public class Client {
     ///         we will retry the webhook a few times,
     ///         so make sure it can be safely called more than once.
     ///    - stream:
-    ///         Whether to stream the prediction output.
-    ///         By default, this is `false`.
+    ///         The stream parameter has no effect, as streaming is now enabled by default for all predictions.
+    ///         For more information, see https://replicate.com/changelog/2024-07-15-streams-always-available-stream-parameter-deprecated
     public func createPrediction<Input: Codable, Output: Codable>(
         _ type: Prediction<Input, Output>.Type = AnyPrediction.self,
         deployment id: Deployment.ID,
@@ -307,10 +299,6 @@ public class Client {
         if let webhook {
             params["webhook"] = "\(webhook.url.absoluteString)"
             params["webhook_events_filter"] = .array(webhook.events.map { "\($0.rawValue)" })
-        }
-
-        if stream {
-            params["stream"] = true
         }
 
         return try await fetch(.post, "deployments/\(id)/predictions", params: params)
