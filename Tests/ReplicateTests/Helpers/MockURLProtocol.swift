@@ -284,6 +284,82 @@ class MockURLProtocol: URLProtocol {
                   ]
                 }
                 """#
+            case ("QUERY", "https://api.replicate.com/v1/models"?):
+                statusCode = 200
+                json = #"""
+                {
+                  "next": null,
+                  "previous": null,
+                  "results": [
+                    {
+                      "url": "https://replicate.com/replicate/hello-world",
+                      "owner": "replicate",
+                      "name": "hello-world",
+                      "description": "A tiny model that says hello",
+                      "visibility": "public",
+                      "github_url": "https://github.com/replicate/cog-examples",
+                      "paper_url": null,
+                      "license_url": null,
+                      "run_count": 930512,
+                      "cover_image_url": "https://tjzk.replicate.delivery/models_models_cover_image/9c1f748e-a9fc-4cfd-a497-68262ee6151a/replicate-prediction-caujujsgrng7.png",
+                      "default_example": {
+                        "completed_at": "2022-04-26T19:30:10.926419Z",
+                        "created_at": "2022-04-26T19:30:10.761396Z",
+                        "error": null,
+                        "id": "3s2vyrb3pfblrnyp2smdsxxjvu",
+                        "input": {
+                          "text": "Alice"
+                        },
+                        "logs": null,
+                        "metrics": {
+                          "predict_time": 2e-06
+                        },
+                        "output": "hello Alice",
+                        "started_at": "2022-04-26T19:30:10.926417Z",
+                        "status": "succeeded",
+                        "urls": {
+                          "get": "https://api.replicate.com/v1/predictions/3s2vyrb3pfblrnyp2smdsxxjvu",
+                          "cancel": "https://api.replicate.com/v1/predictions/3s2vyrb3pfblrnyp2smdsxxjvu/cancel"
+                        },
+                        "model": "replicate/hello-world",
+                        "version": "5c7d5dc6dd8bf75c1acaa8565735e7986bc5b66206b55cca93cb72c9bf15ccaa",
+                        "webhook_completed": null
+                      },
+                      "latest_version": {
+                        "id": "5c7d5dc6dd8bf75c1acaa8565735e7986bc5b66206b55cca93cb72c9bf15ccaa",
+                        "created_at": "2022-04-26T19:29:04.418669Z",
+                        "cog_version": "0.3.0",
+                        "openapi_schema": {
+                          "openapi": "3.1.0",
+                          "components": {
+                            "schemas": {
+                              "Input": {
+                                "type": "object",
+                                "title": "Input",
+                                "required": [
+                                  "text"
+                                ],
+                                "properties": {
+                                  "text": {
+                                    "type": "string",
+                                    "title": "Text",
+                                    "x-order": 0,
+                                    "description": "Text to prefix with 'hello '"
+                                  }
+                                }
+                              },
+                              "Output": {
+                                "type": "string",
+                                "title": "Output"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+                """#
             case ("GET", "https://api.replicate.com/v1/models/replicate/hello-world"?):
                 statusCode = 200
                 json = #"""

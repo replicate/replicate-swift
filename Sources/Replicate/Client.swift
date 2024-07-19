@@ -367,6 +367,17 @@ public class Client {
         return try await fetch(.get, "models", cursor: cursor)
     }
 
+    /// Search for public models on Replicate.
+    ///
+    /// - Parameter query: The search query string.
+    /// - Returns: A page of models matching the search query.
+    public func searchModels(query: String) async throws -> Pagination.Page<Model> {
+        var request = try createRequest(method: .query, path: "models")
+        request.addValue("text/plain", forHTTPHeaderField: "Content-Type")
+        request.httpBody = query.data(using: .utf8)
+        return try await sendRequest(request)
+    }
+
     /// Get a model
     ///
     /// - Parameters:
@@ -638,6 +649,7 @@ public class Client {
     private enum Method: String, Hashable {
         case get = "GET"
         case post = "POST"
+        case query = "QUERY"
     }
 
     private func fetch<T: Decodable>(_ method: Method,
