@@ -649,13 +649,19 @@ public class Client {
             params = ["cursor": "\(cursor)"]
         }
 
-        return try await fetch(method, path, params: params)
+        let request = try createRequest(method: method, path: path, params: params)
+        return try await sendRequest(request)
     }
 
     private func fetch<T: Decodable>(_ method: Method,
                                      _ path: String,
                                      params: [String: Value]? = nil)
     async throws -> T {
+        let request = try createRequest(method: method, path: path, params: params)
+        return try await sendRequest(request)
+    }
+
+    private func createRequest(method: Method, path: String, params: [String: Value]? = nil) throws -> URLRequest {
         var urlComponents = URLComponents(string: self.baseURLString.appending(path))
         var httpBody: Data? = nil
 
@@ -672,6 +678,10 @@ public class Client {
             if let params {
                 let encoder = JSONEncoder()
                 httpBody = try encoder.encode(params)
+            }
+        case .query:
+            if let params, let queryString = params["query"] {
+                httpBody = queryString.description.data(using: .utf8)
             }
         }
 
@@ -696,6 +706,10 @@ public class Client {
             request.addValue(userAgent, forHTTPHeaderField: "User-Agent")
         }
 
+        return request
+    }
+
+    private func sendRequest<T: Decodable>(_ request: URLRequest) async throws -> T {
         let (data, response) = try await session.data(for: request)
 
         let decoder = JSONDecoder()
