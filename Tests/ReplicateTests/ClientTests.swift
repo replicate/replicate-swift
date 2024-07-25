@@ -240,4 +240,11 @@ final class ClientTests: XCTestCase {
             XCTAssertEqual(error.detail, "Authentication credentials were not provided.")
         }
     }
+
+    func testSearchModels() async throws {
+        let models = try await client.searchModels(query: "greeter")
+        XCTAssertEqual(models.results.count, 1)
+        XCTAssertEqual(models.results[0].owner, "replicate")
+        XCTAssertEqual(models.results[0].name, "hello-world")
+    }
 }

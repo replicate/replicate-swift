@@ -367,6 +367,17 @@ public class Client {
         return try await fetch(.get, "models", cursor: cursor)
     }
 
+    /// Search for public models on Replicate.
+    ///
+    /// - Parameter query: The search query string.
+    /// - Returns: A page of models matching the search query.
+    public func searchModels(query: String) async throws -> Pagination.Page<Model> {
+        var request = try createRequest(method: .query, path: "models")
+        request.addValue("text/plain", forHTTPHeaderField: "Content-Type")
+        request.httpBody = query.data(using: .utf8)
+        return try await sendRequest(request)
+    }
+
     /// Get a model
     ///
     /// - Parameters:
@@ -638,6 +649,7 @@ public class Client {
     private enum Method: String, Hashable {
         case get = "GET"
         case post = "POST"
+        case query = "QUERY"
     }
 
     private func fetch<T: Decodable>(_ method: Method,
@@ -649,13 +661,19 @@ public class Client {
             params = ["cursor": "\(cursor)"]
         }
 
-        return try await fetch(method, path, params: params)
+        let request = try createRequest(method: method, path: path, params: params)
+        return try await sendRequest(request)
     }
 
     private func fetch<T: Decodable>(_ method: Method,
                                      _ path: String,
                                      params: [String: Value]? = nil)
     async throws -> T {
+        let request = try createRequest(method: method, path: path, params: params)
+        return try await sendRequest(request)
+    }
+
+    private func createRequest(method: Method, path: String, params: [String: Value]? = nil) throws -> URLRequest {
         var urlComponents = URLComponents(string: self.baseURLString.appending(path))
         var httpBody: Data? = nil
 
@@ -672,6 +690,10 @@ public class Client {
             if let params {
                 let encoder = JSONEncoder()
                 httpBody = try encoder.encode(params)
+            }
+        case .query:
+            if let params, let queryString = params["query"] {
+                httpBody = queryString.description.data(using: .utf8)
             }
         }
 
@@ -696,6 +718,10 @@ public class Client {
             request.addValue(userAgent, forHTTPHeaderField: "User-Agent")
         }
 
+        return request
+    }
+
+    private func sendRequest<T: Decodable>(_ request: URLRequest) async throws -> T {
         let (data, response) = try await session.data(for: request)
 
         let decoder = JSONDecoder()
