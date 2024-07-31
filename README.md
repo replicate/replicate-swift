@@ -7,7 +7,7 @@ This is a Swift client for [Replicate].
 It lets you run models from your Swift code,
 and do various other things on Replicate.
 
-To learn how to use it, 
+To learn how to use it,
 [take a look at our guide to building a SwiftUI app with Replicate](https://replicate.com/docs/get-started/swiftui).
 
 ## Usage
@@ -32,7 +32,10 @@ You can run a model and get its output:
 let output = try await replicate.run(
     "stability-ai/stable-diffusion-3",
     ["prompt": "a 19th century portrait of a gentleman otter"]
-)
+) { prediction in
+    // Print the prediction status after each update
+    print(prediction.status)
+}
 
 print(output)
 // ["https://replicate.delivery/yhqm/bh9SsjWXY3pGKJyQzYjQlsZPzcNZ4EYOeEsPjFytc5TjYeNTA/R8_SD3_00001_.webp"]
@@ -59,7 +62,7 @@ like [tencentarc/gfpgan](https://replicate.com/tencentarc/gfpgan),
 receive images as inputs.
 To run a model that takes a file input you can pass either
 a URL to a publicly accessible file on the Internet
-or use the `uriEncoded(mimeType:) helper method to create 
+or use the `uriEncoded(mimeType:) helper method to create
 a base64-encoded data URL from the contents of a local file.
 
 ```swift

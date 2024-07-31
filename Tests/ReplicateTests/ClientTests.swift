@@ -74,6 +74,39 @@ final class ClientTests: XCTestCase {
         XCTAssertEqual(prediction.status, .succeeded)
     }
 
+    func testPredictionWaitWithStop() async throws {
+        var prediction = try await client.getPrediction(id: "r6bjfddngldkt2o3bzn3ahtaci")
+
+        var didUpdate = false
+        try await prediction.wait(with: client) { _ in
+            didUpdate = true
+            throw CancellationError()
+        }
+
+        XCTAssertEqual(prediction.id, "r6bjfddngldkt2o3bzn3ahtaci")
+        XCTAssertEqual(prediction.status, .processing)
+        XCTAssertTrue(didUpdate)
+    }
+
+    func testPredictionWaitWithNonCancellationError() async throws {
+        var prediction = try await client.getPrediction(id: "r6bjfddngldkt2o3bzn3ahtaci")
+
+        struct CustomError: Swift.Error {}
+
+        do {
+            try await prediction.wait(with: client) { _ in
+                throw CustomError()
+            }
+            XCTFail("Expected CustomError to be thrown")
+        } catch {
+            XCTAssertTrue(error is CustomError, "Expected CustomError, but got \(type(of: error))")
+        }
+
+        XCTAssertEqual(prediction.id, "r6bjfddngldkt2o3bzn3ahtaci")
+        XCTAssertEqual(prediction.status, .processing)
+    }
+
+
     func testGetPrediction() async throws {
         let prediction = try await client.getPrediction(id: "ufawqhfynnddngldkgtslldrkq")
         XCTAssertEqual(prediction.id, "ufawqhfynnddngldkgtslldrkq")
@@ -178,7 +211,7 @@ final class ClientTests: XCTestCase {
     }
 
     func testListHardware() async throws {
-        let hardware = try await client.listHardware() 
+        let hardware = try await client.listHardware()
         XCTAssertGreaterThan(hardware.count, 1)
         XCTAssertEqual(hardware.first?.name, "CPU")
         XCTAssertEqual(hardware.first?.sku, "cpu")

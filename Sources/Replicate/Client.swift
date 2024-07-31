@@ -56,30 +56,48 @@ public class Client {
     /// Runs a model and waits for its output.
     ///
     /// - Parameters:
-    ///    - identifier: The model version identifier in the format
-    ///                  `{owner}/{name}` or `{owner}/{name}:{version}`.
-    ///    - input: The input depends on what model you are running.
-    ///             To see the available inputs,
-    ///             click the "Run with API" tab on the model you are running.
-    ///             For example, 
-    ///             [stability-ai/stable-diffusion-3](https://replicate.com/stability-ai/stable-diffusion-3)
-    ///             takes `prompt` as an input.
-    ///    - webhook: A webhook that is called when the prediction has completed.
-    ///               It will be a `POST` request where
-    ///               the request body is the same as
-    ///               the response body of the get prediction endpoint.
-    ///               If there are network problems,
-    ///               we will retry the webhook a few times,
-    ///               so make sure it can be safely called more than once.
-    ///    - type: The expected output type. Defaults to `Value.self`.
+    ///    - identifier: 
+    ///        The model version identifier in the format
+    ///        `{owner}/{name}` or `{owner}/{name}:{version}`.
+    ///    - input:
+    ///        The input depends on what model you are running.
+    ///        To see the available inputs,
+    ///        click the "Run with API" tab on the model you are running.
+    ///        For example, 
+    ///        [stability-ai/stable-diffusion-3](https://replicate.com/stability-ai/stable-diffusion-3)
+    ///        takes `prompt` as an input.
+    ///    - webhook:
+    ///        A webhook that is called when the prediction has completed.
+    ///        It will be a `POST` request where
+    ///        the request body is the same as
+    ///        the response body of the get prediction endpoint.
+    ///        If there are network problems,
+    ///        we will retry the webhook a few times,
+    ///        so make sure it can be safely called more than once.
+    ///    - type:
+    ///        The expected output type. Defaults to `Value.self`.
+    ///    - updateHandler:
+    ///        A closure that executes with the updated prediction
+    ///        after each polling request to the API.
+    ///        If the prediction is in a terminal state
+    ///        (e.g. `succeeded`, `failed`, or `canceled`),
+    ///        it's returned immediately and the closure is not executed.
+    ///        Use this to provide feedback to the user
+    ///        about the progress of the prediction,
+    ///        or throw `CancellationError` to stop waiting
+    ///        for the prediction to finish.
     /// - Returns:
     ///        The output of the model,
     ///        or `nil` if the output couldn't be decoded.
+    /// - Throws:
+    ///     Any error thrown from the `updateHandler` closure
+    ///     other than ``CancellationError``.
     public func run<Input: Codable, Output: Codable>(
         _ identifier: Identifier,
         input: Input,
         webhook: Webhook? = nil,
-        _ type: Output.Type = Value.self
+        _ type: Output.Type = Value.self,
+        updateHandler: @escaping (Prediction<Input, Output>) throws -> Void = { _ in () }
     ) async throws -> Output? {
         var prediction: Prediction<Input, Output>
         if let version = identifier.version {
@@ -94,7 +112,7 @@ public class Client {
                                                     webhook: webhook)
         }
 
-        try await prediction.wait(with: self)
+        try await prediction.wait(with: self, updateHandler: updateHandler)
 
         if prediction.status == .failed {
             throw prediction.error ?? Error(detail: "Prediction failed")
