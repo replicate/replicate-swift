@@ -61,7 +61,8 @@ public class Client {
     ///    - input: The input depends on what model you are running.
     ///             To see the available inputs,
     ///             click the "Run with API" tab on the model you are running.
-    ///             For example, stability-ai/stable-diffusion
+    ///             For example, 
+    ///             [stability-ai/stable-diffusion-3](https://replicate.com/stability-ai/stable-diffusion-3)
     ///             takes `prompt` as an input.
     ///    - webhook: A webhook that is called when the prediction has completed.
     ///               It will be a `POST` request where
@@ -121,7 +122,8 @@ public class Client {
     ///        The input depends on what model you are running.
     ///        To see the available inputs,
     ///        click the "Run with API" tab on the model you are running.
-    ///        For example, stability-ai/stable-diffusion
+    ///        For example,
+    ///        [stability-ai/stable-diffusion-3](https://replicate.com/stability-ai/stable-diffusion-3)
     ///        takes `prompt` as an input.
     ///    - webhook:
     ///         A webhook that is called when the prediction has completed.
@@ -184,7 +186,8 @@ public class Client {
     ///    - input: The input depends on what model you are running.
     ///        To see the available inputs,
     ///        click the "Run with API" tab on the model you are running.
-    ///        For example, stability-ai/stable-diffusion
+    ///        For example, 
+    ///        [stability-ai/stable-diffusion-3](https://replicate.com/stability-ai/stable-diffusion-3)
     ///        takes `prompt` as an input.
     ///    - webhook: A webhook that is called when the prediction has completed.
     ///         It will be a `POST` request where
@@ -231,7 +234,8 @@ public class Client {
     ///        The input depends on what model you are running.
     ///        To see the available inputs,
     ///        click the "Run with API" tab on the model you are running.
-    ///        For example, stability-ai/stable-diffusion
+    ///        For example,
+    ///        [stability-ai/stable-diffusion-3](https://replicate.com/stability-ai/stable-diffusion-3)
     ///        takes `prompt` as an input.
     ///    - webhook:
     ///         A webhook that is called when the prediction has completed.
@@ -278,7 +282,8 @@ public class Client {
     ///        The input depends on what model you are running.
     ///        To see the available inputs,
     ///        click the "Run with API" tab on the model you are running.
-    ///        For example, stability-ai/stable-diffusion
+    ///        For example,
+    ///        [stability-ai/stable-diffusion-3](https://replicate.com/stability-ai/stable-diffusion-3)
     ///        takes `prompt` as an input.
     ///    - webhook:
     ///        A webhook that is called when the prediction has completed.
@@ -399,7 +404,7 @@ public class Client {
     ///    - id: The model identifier, comprising
     ///          the name of the user or organization that owns the model and
     ///          the name of the model.
-    ///          For example, "stability-ai/stable-diffusion".
+    ///          For example, "stability-ai/stable-diffusion-3".
     /// - Returns: The requested model.
     public func getModel(_ id: Model.ID)
         async throws -> Model
@@ -506,7 +511,7 @@ public class Client {
     ///        The model identifier, comprising
     ///        the name of the user or organization that owns the model and
     ///        the name of the model.
-    ///        For example, "stability-ai/stable-diffusion".
+    ///        For example, "stability-ai/stable-diffusion-3".
     ///    - cursor:
     ///        A pointer to a page of results to fetch.
     /// - Returns: A page of model versions.
@@ -524,7 +529,7 @@ public class Client {
     ///        The model identifier, comprising
     ///        the name of the user or organization that owns the model and
     ///        the name of the model.
-    ///        For example, "stability-ai/stable-diffusion".
+    ///        For example, "stability-ai/stable-diffusion-3".
     ///    - version:
     ///        The ID of the version.
     public func getModelVersion(_ id: Model.ID,

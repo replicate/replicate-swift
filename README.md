@@ -7,7 +7,8 @@ This is a Swift client for [Replicate].
 It lets you run models from your Swift code,
 and do various other things on Replicate.
 
-To learn how to use it, [take a look at our guide to building a SwiftUI app with Replicate](https://replicate.com/docs/get-started/swiftui).
+To learn how to use it, 
+[take a look at our guide to building a SwiftUI app with Replicate](https://replicate.com/docs/get-started/swiftui).
 
 ## Usage
 
@@ -29,25 +30,27 @@ You can run a model and get its output:
 
 ```swift
 let output = try await replicate.run(
-    "stability-ai/stable-diffusion:db21e45d3f7023abc2a46ee38a23973f6dce16bb082a930b0c49861f96d1e5bf",
-    ["prompt": "a 19th century portrait of a wombat gentleman"]
+    "stability-ai/stable-diffusion-3",
+    ["prompt": "a 19th century portrait of a gentleman otter"]
 )
 
 print(output)
-// ["https://replicate.com/api/models/stability-ai/stable-diffusion/files/50fcac81-865d-499e-81ac-49de0cb79264/out-0.png"]
+// ["https://replicate.delivery/yhqm/bh9SsjWXY3pGKJyQzYjQlsZPzcNZ4EYOeEsPjFytc5TjYeNTA/R8_SD3_00001_.webp"]
 ```
 
 Or fetch a model by name and create a prediction against its latest version:
 
 ```swift
-let model = try await replicate.getModel("stability-ai/stable-diffusion")
+let model = try await replicate.getModel("stability-ai/stable-diffusion-3")
 if let latestVersion = model.latestVersion {
-    let prompt = "a 19th century portrait of a wombat gentleman"
+    let prompt = "a 19th century portrait of a gentleman otter"
     let prediction = try await replicate.createPrediction(version: latestVersion.id,
                                                        input: ["prompt": "\(prompt)"],
                                                        wait: true)
+    print(prediction.id)
+    // "s654jhww3hrm60ch11v8t3zpkg"
     print(prediction.output)
-    // ["https://replicate.com/api/models/stability-ai/stable-diffusion/files/50fcac81-865d-499e-81ac-49de0cb79264/out-0.png"]
+    // ["https://replicate.delivery/yhqm/bh9SsjWXY3pGKJyQzYjQlsZPzcNZ4EYOeEsPjFytc5TjYeNTA/R8_SD3_00001_.webp"]
 }
 ```
 
@@ -67,7 +70,7 @@ if let latestVersion = model.latestVersion {
     let prediction = try await replicate.createPrediction(version: latestVersion.id,
                                                        input: ["img": "\(data.uriEncoded(mimeType: mimeType))"])
     print(prediction.output)
-    // ["https://replicate.com/api/models/tencentarc/gfpgan/files/85f53415-0dc7-4703-891f-1e6f912119ad/output.png"]
+    // ["https://replicate.delivery/mgxm/85f53415-0dc7-4703-891f-1e6f912119ad/output.png"]
 }
 ```
 
