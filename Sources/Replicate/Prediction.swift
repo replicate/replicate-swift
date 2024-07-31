@@ -1,7 +1,10 @@
 import struct Foundation.Date
 import struct Foundation.TimeInterval
 import struct Foundation.URL
+import class Foundation.Progress
 import struct Dispatch.DispatchTime
+
+import RegexBuilder
 
 /// A prediction with unspecified inputs and outputs.
 public typealias AnyPrediction = Prediction<[String: Value], Value>
@@ -78,6 +81,32 @@ public struct Prediction<Input, Output>: Identifiable where Input: Codable, Outp
 
     /// A convenience object that can be used to construct new API requests against the given prediction.
     public let urls: [String: URL]
+
+    // MARK: -
+
+    @available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *)
+    public var progress: Progress? {
+        guard let logs = self.logs else { return nil }
+
+        let regex: Regex = #/^\s*(\d+)%\s*\|.+?\|\s*(\d+)\/(\d+)/#
+
+        let lines = logs.split(separator: "\n")
+        guard !lines.isEmpty else { return nil }
+
+        for line in lines.reversed() {
+            let lineString = String(line).trimmingCharacters(in: .whitespaces)
+            if let match = try? regex.firstMatch(in: lineString),
+               let current = Int64(match.output.2),
+               let total = Int64(match.output.3)
+            {
+                let progress = Progress(totalUnitCount: total)
+                progress.completedUnitCount = current
+                return progress
+            }
+        }
+
+        return nil
+    }
 
     // MARK: -
 
