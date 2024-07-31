@@ -18,7 +18,7 @@ public class Client {
     private let token: String
 
     /// The underlying client session.
-    internal var session = URLSession(configuration: .default)
+    internal(set) public var session: URLSession
 
     /// The retry policy for requests made by the client.
     public var retryPolicy: RetryPolicy = .default
@@ -28,8 +28,13 @@ public class Client {
     /// You can get an Replicate API token on your
     /// [account page](https://replicate.com/account).
     ///
-    /// - Parameter token: The API token.
+    /// - Parameters:
+    ///   - session: The underlying client session.
+    ///   - baseURLString: The base URL for requests made by the client.
+    ///   - userAgent: The value for the `User-Agent` header sent in requests, if any.
+    ///   - token: The API token.
     public init(
+        session: URLSession = URLSession(configuration: .default),
         baseURLString: String = "https://api.replicate.com/v1/",
         userAgent: String? = nil,
         token: String
@@ -43,6 +48,7 @@ public class Client {
         self.baseURLString = baseURLString
         self.userAgent = userAgent
         self.token = token
+        self.session = session
     }
 
     // MARK: -
