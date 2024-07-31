@@ -46,7 +46,7 @@ public struct Prediction<Input, Output>: Identifiable where Input: Codable, Outp
     /// To see the available inputs,
     /// click the "Run with API" tab on the model you are running.
     /// For example,
-    /// [stability-ai/stable-diffusion](https://replicate.com/stability-ai/stable-diffusion)
+    /// [stability-ai/stable-diffusion-3](https://replicate.com/stability-ai/stable-diffusion-3)
     /// takes `prompt` as an input.
     ///
     /// Files should be passed as data URLs or HTTP URLs.

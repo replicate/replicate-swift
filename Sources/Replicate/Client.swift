@@ -29,9 +29,9 @@ public class Client {
     /// [account page](https://replicate.com/account).
     ///
     /// - Parameters:
-    ///   - session: The underlying client session.
-    ///   - baseURLString: The base URL for requests made by the client.
-    ///   - userAgent: The value for the `User-Agent` header sent in requests, if any.
+    ///   - session: The underlying client session. Defaults to `URLSession(configuration: .default)`.
+    ///   - baseURLString: The base URL for requests made by the client. Defaults to "https://api.replicate.com/v1/".
+    ///   - userAgent: The value for the `User-Agent` header sent in requests, if any. Defaults to `nil`.
     ///   - token: The API token.
     public init(
         session: URLSession = URLSession(configuration: .default),
@@ -56,24 +56,25 @@ public class Client {
     /// Runs a model and waits for its output.
     ///
     /// - Parameters:
-    ///    - identifier:
-    ///        The model version identifier in the format "{owner}/{name}:{version}"
-    ///    - input:
-    ///        The input depends on what model you are running.
-    ///
-    ///        To see the available inputs,
-    ///        click the "Run with API" tab on the model you are running.
-    ///        For example, stability-ai/stable-diffusion
-    ///        takes `prompt` as an input.
-    ///    - webhook:
-    ///         A webhook that is called when the prediction has completed.
-    ///
-    ///         It will be a `POST` request where
-    ///         the request body is the same as
-    ///         the response body of the get prediction endpoint.
-    ///         If there are network problems,
-    ///         we will retry the webhook a few times,
-    ///         so make sure it can be safely called more than once.
+    ///    - identifier: The model version identifier in the format
+    ///                  `{owner}/{name}` or `{owner}/{name}:{version}`.
+    ///    - input: The input depends on what model you are running.
+    ///             To see the available inputs,
+    ///             click the "Run with API" tab on the model you are running.
+    ///             For example, 
+    ///             [stability-ai/stable-diffusion-3](https://replicate.com/stability-ai/stable-diffusion-3)
+    ///             takes `prompt` as an input.
+    ///    - webhook: A webhook that is called when the prediction has completed.
+    ///               It will be a `POST` request where
+    ///               the request body is the same as
+    ///               the response body of the get prediction endpoint.
+    ///               If there are network problems,
+    ///               we will retry the webhook a few times,
+    ///               so make sure it can be safely called more than once.
+    ///    - type: The expected output type. Defaults to `Value.self`.
+    /// - Returns:
+    ///        The output of the model,
+    ///        or `nil` if the output couldn't be decoded.
     public func run<Input: Codable, Output: Codable>(
         _ identifier: Identifier,
         input: Input,
@@ -107,9 +108,8 @@ public class Client {
     /// Create a prediction
     ///
     /// - Parameters:
-    ///    - id:
-    ///         The ID of the model version that you want to run.
-    ///
+    ///    - type: The type of the prediction. Defaults to `AnyPrediction.self`.
+    ///    - id: The ID of the model version that you want to run.
     ///         You can get your model's versions using the API,
     ///         or find them on the website by clicking
     ///         the "Versions" tab on the Replicate model page,
@@ -120,14 +120,13 @@ public class Client {
     ///         that's created when you build your model.
     ///    - input:
     ///        The input depends on what model you are running.
-    ///
     ///        To see the available inputs,
     ///        click the "Run with API" tab on the model you are running.
-    ///        For example, stability-ai/stable-diffusion
+    ///        For example,
+    ///        [stability-ai/stable-diffusion-3](https://replicate.com/stability-ai/stable-diffusion-3)
     ///        takes `prompt` as an input.
     ///    - webhook:
     ///         A webhook that is called when the prediction has completed.
-    ///
     ///         It will be a `POST` request where
     ///         the request body is the same as
     ///         the response body of the get prediction endpoint.
@@ -142,6 +141,7 @@ public class Client {
     ///         and this method returns the prediction object encoded
     ///         in the original creation response
     ///         (``Prediction/status`` is `.starting`).
+    /// - Returns: The created prediction.
     @available(*, deprecated, message: "wait parameter is deprecated; use ``Prediction/wait(with:)`` or ``Client/run(_:input:webhook:_:)``")
     public func createPrediction<Input: Codable, Output: Codable>(
         _ type: Prediction<Input, Output>.Type = AnyPrediction.self,
@@ -172,36 +172,33 @@ public class Client {
     /// Create a prediction from a model version
     ///
     /// - Parameters:
+    ///    - type:
+    ///         The type of the prediction. Defaults to `AnyPrediction.self`.
     ///    - version:
     ///         The ID of the model version that you want to run.
-    ///
     ///         You can get your model's versions using the API,
     ///         or find them on the website by clicking
     ///         the "Versions" tab on the Replicate model page,
     ///         e.g. replicate.com/replicate/hello-world/versions,
     ///         then copying the full SHA256 hash from the URL.
-    ///
     ///         The version ID is the same as the Docker image ID
     ///         that's created when you build your model.
-    ///    - input:
-    ///        The input depends on what model you are running.
-    ///
+    ///    - input: The input depends on what model you are running.
     ///        To see the available inputs,
     ///        click the "Run with API" tab on the model you are running.
-    ///        For example, stability-ai/stable-diffusion
+    ///        For example, 
+    ///        [stability-ai/stable-diffusion-3](https://replicate.com/stability-ai/stable-diffusion-3)
     ///        takes `prompt` as an input.
-    ///    - webhook:
-    ///         A webhook that is called when the prediction has completed.
-    ///
+    ///    - webhook: A webhook that is called when the prediction has completed.
     ///         It will be a `POST` request where
     ///         the request body is the same as
     ///         the response body of the get prediction endpoint.
     ///         If there are network problems,
     ///         we will retry the webhook a few times,
     ///         so make sure it can be safely called more than once.
-    ///    - stream:
-    ///         Whether to stream the prediction output.
+    ///    - stream: Whether to stream the prediction output.
     ///         By default, this is `false`.
+    /// - Returns: The created prediction.
     public func createPrediction<Input: Codable, Output: Codable>(
         _ type: Prediction<Input, Output>.Type = AnyPrediction.self,
         version id: Model.Version.ID,
@@ -229,27 +226,28 @@ public class Client {
     /// Create a prediction from a model
     ///
     /// - Parameters:
+    ///    - type:
+    ///        The type of the prediction. Defaults to `AnyPrediction.self`.
     ///    - model:
-    ///         The ID of the model that you want to run.
+    ///        The ID of the model that you want to run.
     ///    - input:
     ///        The input depends on what model you are running.
-    ///
     ///        To see the available inputs,
     ///        click the "Run with API" tab on the model you are running.
-    ///        For example, stability-ai/stable-diffusion
+    ///        For example,
+    ///        [stability-ai/stable-diffusion-3](https://replicate.com/stability-ai/stable-diffusion-3)
     ///        takes `prompt` as an input.
     ///    - webhook:
     ///         A webhook that is called when the prediction has completed.
-    ///
     ///         It will be a `POST` request where
     ///         the request body is the same as
     ///         the response body of the get prediction endpoint.
     ///         If there are network problems,
     ///         we will retry the webhook a few times,
     ///         so make sure it can be safely called more than once.
-    ///    - stream:
-    ///         Whether to stream the prediction output.
+    ///    - stream: Whether to stream the prediction output.
     ///         By default, this is `false`.
+    /// - Returns: The created prediction.
     public func createPrediction<Input: Codable, Output: Codable>(
         _ type: Prediction<Input, Output>.Type = AnyPrediction.self,
         model id: Model.ID,
@@ -276,29 +274,29 @@ public class Client {
     /// Create a prediction using a deployment
     ///
     /// - Parameters:
-    ///    - owner:
-    ///         The name of the deployment owner.
-    ///    - name:
-    ///         The name of the deployment.
+    ///    - type:
+    ///        The type of the prediction. Defaults to `AnyPrediction.self`.
+    ///    - deployment:
+    ///        The ID of the deployment.
     ///    - input:
     ///        The input depends on what model you are running.
-    ///
     ///        To see the available inputs,
     ///        click the "Run with API" tab on the model you are running.
-    ///        For example, stability-ai/stable-diffusion
+    ///        For example,
+    ///        [stability-ai/stable-diffusion-3](https://replicate.com/stability-ai/stable-diffusion-3)
     ///        takes `prompt` as an input.
     ///    - webhook:
-    ///         A webhook that is called when the prediction has completed.
-    ///
-    ///         It will be a `POST` request where
-    ///         the request body is the same as
-    ///         the response body of the get prediction endpoint.
-    ///         If there are network problems,
-    ///         we will retry the webhook a few times,
-    ///         so make sure it can be safely called more than once.
+    ///        A webhook that is called when the prediction has completed.
+    ///        It will be a `POST` request where
+    ///        the request body is the same as
+    ///        the response body of the get prediction endpoint.
+    ///        If there are network problems,
+    ///        we will retry the webhook a few times,
+    ///        so make sure it can be safely called more than once.
     ///    - stream:
-    ///         Whether to stream the prediction output.
-    ///         By default, this is `false`.
+    ///        Whether to stream the prediction output.
+    ///        By default, this is `false`.
+    /// - Returns: The created prediction.
     public func createPrediction<Input: Codable, Output: Codable>(
         _ type: Prediction<Input, Output>.Type = AnyPrediction.self,
         deployment id: Deployment.ID,
@@ -333,7 +331,12 @@ public class Client {
 
     /// List predictions
     ///
-    /// - Parameter cursor: A pointer to a page of results to fetch.
+    /// - Parameters:
+    ///   - type:
+    ///        The type of the predictions. Defaults to `AnyPrediction.self`.
+    ///   - cursor:
+    ///        A pointer to a page of results to fetch.
+    /// - Returns: A page of predictions.
     public func listPredictions<Input: Codable, Output: Codable>(
         _ type: Prediction<Input, Output>.Type = AnyPrediction.self,
         cursor: Pagination.Cursor? = nil
@@ -344,7 +347,10 @@ public class Client {
 
     /// Get a prediction
     ///
-    /// - Parameter id: The ID of the prediction you want to fetch.
+    /// - Parameters:
+    ///   - type: The type of the prediction. Defaults to `AnyPrediction.self`.
+    ///   - id: The ID of the prediction you want to fetch.
+    /// - Returns: The requested prediction.
     public func getPrediction<Input: Codable, Output: Codable>(
         _ type: Prediction<Input, Output>.Type = AnyPrediction.self,
         id: Prediction.ID
@@ -354,7 +360,12 @@ public class Client {
 
     /// Cancel a prediction
     ///
-    /// - Parameter id: The ID of the prediction you want to cancel.
+    /// - Parameters:
+    ///   - type:
+    ///        The type of the prediction. Defaults to `AnyPrediction.self`.
+    ///   - id:
+    ///        The ID of the prediction you want to cancel.
+    /// - Returns: The canceled prediction.
     public func cancelPrediction<Input: Codable, Output: Codable>(
         _ type: Prediction<Input, Output>.Type = AnyPrediction.self,
         id: Prediction.ID
@@ -366,7 +377,9 @@ public class Client {
 
     /// List public models
     /// - Parameters:
-    ///     - Parameter cursor: A pointer to a page of results to fetch.
+    ///   - cursor:
+    ///        A pointer to a page of results to fetch.
+    /// - Returns: A page of models.
     public func listModels(cursor: Pagination.Cursor? = nil)
         async throws -> Pagination.Page<Model>
     {
@@ -375,7 +388,8 @@ public class Client {
 
     /// Search for public models on Replicate.
     ///
-    /// - Parameter query: The search query string.
+    /// - Parameters:
+    ///   - query: The search query string.
     /// - Returns: A page of models matching the search query.
     public func searchModels(query: String) async throws -> Pagination.Page<Model> {
         var request = try createRequest(method: .query, path: "models")
@@ -390,7 +404,8 @@ public class Client {
     ///    - id: The model identifier, comprising
     ///          the name of the user or organization that owns the model and
     ///          the name of the model.
-    ///          For example, "stability-ai/stable-diffusion".
+    ///          For example, "stability-ai/stable-diffusion-3".
+    /// - Returns: The requested model.
     public func getModel(_ id: Model.ID)
         async throws -> Model
     {
@@ -400,15 +415,33 @@ public class Client {
     /// Create a model
     ///
     /// - Parameters:
-    ///   - owner: The name of the user or organization that will own the model. This must be the same as the user or organization that is making the API request. In other words, the API token used in the request must belong to this user or organization.
-    ///   - name: The name of the model. This must be unique among all models owned by the user or organization.
-    ///   - visibility: Whether the model should be public or private. A public model can be viewed and run by anyone, whereas a private model can be viewed and run only by the user or organization members that own the model.
-    ///   - hardware: The SKU for the hardware used to run the model. Possible values can be found by calling ``listHardware()``.
-    ///   - description: A description of the model.
-    ///   - githubURL: A URL for the model's source code on GitHub.
-    ///   - paperURL: A URL for the model's paper.
-    ///   - licenseURL: A URL for the model's license.
-    ///   - coverImageURL: A URL for the model's cover image. This should be an image file.
+    ///   - owner:
+    ///        The name of the user or organization that will own the model.
+    ///        This must be the same as the user or organization that is making the API request.
+    ///        In other words, the API token used in the request must belong to this user or organization.
+    ///   - name:
+    ///        The name of the model.
+    ///        This must be unique among all models owned by the user or organization.
+    ///   - visibility:
+    ///        Whether the model should be public or private.
+    ///        A public model can be viewed and run by anyone,
+    ///        whereas a private model can be viewed and run only by the user or organization members
+    ///        that own the model.
+    ///   - hardware:
+    ///        The SKU for the hardware used to run the model.
+    ///        Possible values can be found by calling ``listHardware()``.
+    ///   - description:
+    ///        A description of the model.
+    ///   - githubURL:
+    ///        A URL for the model's source code on GitHub.
+    ///   - paperURL:
+    ///        A URL for the model's paper.
+    ///   - licenseURL:
+    ///        A URL for the model's license.
+    ///   - coverImageURL:
+    ///        A URL for the model's cover image.
+    ///        This should be an image file.
+    /// - Returns: The created model.
     public func createModel(
         owner: String,
         name: String,
@@ -474,11 +507,14 @@ public class Client {
     /// List model versions
     ///
     /// - Parameters:
-    ///    - id: The model identifier, comprising
-    ///          the name of the user or organization that owns the model and
-    ///          the name of the model.
-    ///          For example, "stability-ai/stable-diffusion".
-    ///    - cursor: A pointer to a page of results to fetch.
+    ///    - id:
+    ///        The model identifier, comprising
+    ///        the name of the user or organization that owns the model and
+    ///        the name of the model.
+    ///        For example, "stability-ai/stable-diffusion-3".
+    ///    - cursor:
+    ///        A pointer to a page of results to fetch.
+    /// - Returns: A page of model versions.
     public func listModelVersions(_ id: Model.ID,
                                  cursor: Pagination.Cursor? = nil)
         async throws -> Pagination.Page<Model.Version>
@@ -489,11 +525,13 @@ public class Client {
     /// Get a model version
     ///
     /// - Parameters:
-    ///    - id: The model identifier, comprising
-    ///          the name of the user or organization that owns the model and
-    ///          the name of the model.
-    ///          For example, "stability-ai/stable-diffusion".
-    ///    - version: The ID of the version.
+    ///    - id:
+    ///        The model identifier, comprising
+    ///        the name of the user or organization that owns the model and
+    ///        the name of the model.
+    ///        For example, "stability-ai/stable-diffusion-3".
+    ///    - version:
+    ///        The ID of the version.
     public func getModelVersion(_ id: Model.ID,
                                 version: Model.Version.ID)
         async throws -> Model.Version
@@ -597,7 +635,10 @@ public class Client {
 
     /// List trainings
     ///
-    /// - Parameter cursor: A pointer to a page of results to fetch.
+    /// - Parameters:
+    ///   - type: The type of the training. Defaults to `AnyTraining.self`.
+    ///   - cursor: A pointer to a page of results to fetch.
+    /// - Returns: A page of trainings.
     public func listTrainings<Input: Codable>(
         _ type: Training<Input>.Type = AnyTraining.self,
         cursor: Pagination.Cursor? = nil
@@ -608,7 +649,10 @@ public class Client {
 
     /// Get a training
     ///
-    /// - Parameter id: The ID of the training you want to fetch.
+    /// - Parameters:
+    ///   - type: The type of the training. Defaults to `AnyTraining.self`.
+    ///   - id: The ID of the training you want to fetch.
+    /// - Returns: The requested training.
     public func getTraining<Input: Codable>(
         _ type: Training<Input>.Type = AnyTraining.self,
         id: Training.ID
@@ -619,7 +663,10 @@ public class Client {
 
     /// Cancel a training
     ///
-    /// - Parameter id: The ID of the training you want to cancel.
+    /// - Parameters:
+    ///   - type: The type of the training. Defaults to `AnyTraining.self`.
+    ///   - id: The ID of the training you want to cancel.
+    /// - Returns: The canceled training.
     public func cancelTraining<Input: Codable>(
         _ type: Training<Input>.Type = AnyTraining.self,
         id: Training.ID
@@ -629,8 +676,10 @@ public class Client {
     }
 
     // MARK: -
-    
+
     /// Get the current account
+    ///
+    /// - Returns: The current account.
     public func getCurrentAccount() async throws -> Account {
         return try await fetch(.get, "account")
     }
@@ -644,6 +693,7 @@ public class Client {
     ///          the name of the user or organization that owns the deployment and
     ///          the name of the deployment.
     ///          For example, "replicate/my-app-image-generator".
+    /// - Returns: The requested deployment.
     public func getDeployment(_ id: Deployment.ID)
         async throws -> Deployment
     {
@@ -973,7 +1023,7 @@ extension JSONDecoder.DateDecodingStrategy {
     static let iso8601WithFractionalSeconds = custom { decoder in
         let container = try decoder.singleValueContainer()
         let string = try container.decode(String.self)
-        
+
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [.withInternetDateTime,
                                    .withFractionalSeconds]
@@ -981,7 +1031,7 @@ extension JSONDecoder.DateDecodingStrategy {
         if let date = formatter.date(from: string) {
             return date
         }
-        
+
         // Try again without fractional seconds
         formatter.formatOptions = [.withInternetDateTime]
 
