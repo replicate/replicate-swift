@@ -84,41 +84,80 @@ public struct Prediction<Input, Output>: Identifiable where Input: Codable, Outp
     /// Wait for the prediction to complete.
     ///
     /// - Parameters:
-    ///     - client: The client used to make API requests.
-    ///     - delay: The delay between requests.
-    ///     - priority: The task priority.
-    ///     - timeout: If specified,
-    ///                the total amount of time to wait
-    ///                before throwing ``CancellationError``.
-    ///     - maximumRetries: If specified,
-    ///                       the maximum number of requests to make to the API
-    ///                       before throwing ``CancellationError``.
-    /// - Throws: ``CancellationError`` if the prediction was canceled.
+    ///     - client:
+    ///         The client used to make API requests.
+    ///     - priority:
+    ///         The task priority.
+    ///     - updateHandler:
+    ///         A closure that executes with the updated prediction
+    ///         after each polling request to the API.
+    ///         If the prediction is in a terminal state
+    ///         (e.g. `succeeded`, `failed`, or `canceled`),
+    ///         it's returned immediately and the closure is not executed.
+    ///         Use this to provide feedback to the user
+    ///         about the progress of the prediction,
+    ///         or throw `CancellationError` to stop waiting
+    ///         for the prediction to finish.
+    /// - Returns: The completed prediction.
+    /// - Important:
+    ///     Returning early from the `updateHandler` closure
+    ///     doesn't cancel the prediction.
+    ///     To cancel the prediction,
+    ///     call ``cancel(with:)``.
+    /// - Throws:
+    ///     ``CancellationError`` if the prediction was canceled,
+    ///     or any error thrown from the `updateHandler` closure
+    ///     other than ``CancellationError``.
     public mutating func wait(
         with client: Client,
-        priority: TaskPriority? = nil
+        priority: TaskPriority? = nil,
+        updateHandler: @escaping (Self) throws -> Void = { _ in () }
     ) async throws {
         var retrier: Client.RetryPolicy.Retrier = client.retryPolicy.makeIterator()
         self = try await Self.wait(for: self,
                                    with: client,
                                    priority: priority,
-                                   retrier: &retrier)
+                                   retrier: &retrier,
+                                   updateHandler: updateHandler)
     }
 
     /// Waits for a prediction to complete and returns the updated prediction.
     ///
     /// - Parameters:
-    ///     - current: The prediction to wait for.
-    ///     - client: The client used to make API requests.
-    ///     - priority: The task priority.
-    ///     - retrier: An instance of the client retry policy.
-    /// - Returns: The updated prediction.
-    /// - Throws: ``CancellationError`` if the prediction was canceled.
+    ///     - current:
+    ///         The prediction to wait for.
+    ///     - client:
+    ///         The client used to make API requests.
+    ///     - priority:
+    ///         The task priority.
+    ///     - retrier:
+    ///         An instance of the client retry policy.
+    ///     - updateHandler:
+    ///         A closure that executes with the updated prediction
+    ///         after each polling request to the API.
+    ///         If the prediction is in a terminal state
+    ///         (e.g. `succeeded`, `failed`, or `canceled`),
+    ///         it's returned immediately and the closure is not executed.
+    ///         Use this to provide feedback to the user
+    ///         about the progress of the prediction,
+    ///         or throw `CancellationError` to stop waiting
+    ///         for the prediction to finish.
+    /// - Returns: The completed prediction.
+    /// - Important:
+    ///     Returning early from the `updateHandler` closure
+    ///     doesn't cancel the prediction.
+    ///     To cancel the prediction,
+    ///     call ``cancel(with:)``.
+    /// - Throws:
+    ///     ``CancellationError`` if the prediction was canceled,
+    ///     or any error thrown from the `updateHandler` closure
+    ///     other than ``CancellationError``.
     public static func wait(
         for current: Self,
         with client: Client,
         priority: TaskPriority? = nil,
-        retrier: inout Client.RetryPolicy.Iterator
+        retrier: inout Client.RetryPolicy.Iterator,
+        updateHandler: @escaping (Self) throws -> Void = { _ in () }
     ) async throws -> Self {
         guard !current.status.terminated else { return current }
         guard let delay = retrier.next() else { throw CancellationError() }
@@ -146,10 +185,19 @@ public struct Prediction<Input, Output>: Identifiable where Input: Codable, Outp
         if updated.status.terminated {
             return updated
         } else {
+            do {
+                try updateHandler(updated)
+            } catch is CancellationError {
+                return current
+            } catch {
+                throw error
+            }
+
             return try await wait(for: updated,
                                   with: client,
                                   priority: priority,
-                                  retrier: &retrier)
+                                  retrier: &retrier,
+                                  updateHandler: updateHandler)
         }
     }
 
