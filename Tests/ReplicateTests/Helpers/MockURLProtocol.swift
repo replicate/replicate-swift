@@ -142,7 +142,7 @@ class MockURLProtocol: URLProtocol {
                       },
                       "output": ["Hello, Alice!"],
                       "error": null,
-                      "logs": "",
+                      "logs": "Using seed: 12345,\n0%|          | 0/5 [00:00<?, ?it/s]\n20%|██        | 1/5 [00:00<00:01, 21.38it/s]\n40%|████▍     | 2/5 [00:01<00:01, 22.46it/s]\n60%|████▍     | 3/5 [00:01<00:01, 22.46it/s]\n 80%|████████  | 4/5 [00:01<00:00, 22.86it/s]\n100%|██████████| 5/5 [00:02<00:00, 22.26it/s]",
                       "metrics": {
                         "predict_time": 10.0
                       }
