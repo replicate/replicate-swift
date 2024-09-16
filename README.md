@@ -133,7 +133,7 @@ let package = Package(
     // name, platforms, products, etc.
     dependencies: [
         // other dependencies
-        .package(url: "https://github.com/replicate/replicate-swift", from: "0.23.0"),
+        .package(url: "https://github.com/replicate/replicate-swift", from: "0.24.0"),
     ],
     targets: [
         .target(name: "<target>", dependencies: [
